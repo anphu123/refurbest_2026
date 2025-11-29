@@ -204,7 +204,7 @@ export default function CartPage() {
                             <div className="text-right">
                               <p className="text-[10px] sm:text-xs text-gray-600">Thành tiền</p>
                               <p className="font-bold text-green-600 text-sm sm:text-base md:text-lg">
-                                {formatPrice(item.product.price * item.quantity)}
+                                {formatPrice((item.product.price || 0) * item.quantity)}
                               </p>
                             </div>
                           </div>
