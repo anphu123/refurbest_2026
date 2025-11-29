@@ -91,9 +91,9 @@ export default function OrderSummary({ items: propItems, shippingFee: propShippi
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1 sm:gap-2">
                     <span className="font-bold text-green-600 text-xs sm:text-sm">
-                      {formatPrice(item.product.price)}
+                      {formatPrice(item.product.price || 0)}
                     </span>
-                    {item.product.originalPrice && item.product.originalPrice > item.product.price && (
+                    {item.product.originalPrice && item.product.price && item.product.originalPrice > item.product.price && (
                       <span className="text-[10px] sm:text-xs text-gray-500 line-through">
                         {formatPrice(item.product.originalPrice)}
                       </span>

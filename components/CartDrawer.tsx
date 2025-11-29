@@ -197,9 +197,9 @@ export default function CartDrawer() {
                             {/* Enhanced Price */}
                             <div className="flex items-center gap-2 mb-3">
                               <span className="font-bold text-green-600 text-sm">
-                                {formatPrice(item.product.price)}
+                                {formatPrice(item.product.price || 0)}
                               </span>
-                              {item.product.originalPrice && item.product.originalPrice > item.product.price && (
+                              {item.product.originalPrice && item.product.price && item.product.originalPrice > item.product.price && (
                                 <span className="text-xs text-gray-500 line-through">
                                   {formatPrice(item.product.originalPrice)}
                                 </span>
