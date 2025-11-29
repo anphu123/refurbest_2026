@@ -18,7 +18,9 @@ import {
   MessageCircle,
   FolderTree,
   Newspaper,
-  Bot
+  Bot,
+  Images,
+  Mail
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -34,9 +36,11 @@ const menuItems = [
   { icon: Users, label: "Người dùng", path: "/admin/users" },
   { icon: Gift, label: "Mã giảm giá", path: "/admin/coupons" },
   { icon: Newspaper, label: "Tin tức", path: "/admin/news" },
+  { icon: Images, label: "Banner", path: "/admin/banners" },
   { icon: FileText, label: "Hỏi đáp", path: "/admin/contacts" },
   { icon: MessageCircle, label: "CSKH", path: "/admin/customer-service" },
   { icon: Bot, label: "AI Chatbot", path: "/admin/chatbot/settings" },
+  { icon: Mail, label: "Bản tin", path: "/admin/newsletters" },
   { icon: Settings, label: "Cài đặt", path: "/admin/settings" },
 ];
 
@@ -49,15 +53,25 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    // Wait for auth to be loaded before checking
+    if (!mounted) return;
+    
     // Redirect non-admin users away from admin pages
-    if (user && user.email !== 'admin@hoithoxanh.com' && pathname.startsWith('/admin')) {
+    if (user && user.role !== 'admin' && pathname.startsWith('/admin')) {
       router.push('/home');
     }
-    // Redirect unauthenticated users away from admin pages
-    if (!user && pathname.startsWith('/admin')) {
-      router.push('/home');
-    }
-  }, [user, router, pathname]);
+    // Redirect unauthenticated users away from admin pages (but wait a bit for auth to load)
+    const timer = setTimeout(() => {
+      if (!user && pathname.startsWith('/admin')) {
+        router.push('/home');
+      }
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [user, router, pathname, mounted]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -69,40 +83,40 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   // Don't render admin pages if user is not admin
-  if (!user || user.email !== 'admin@hoithoxanh.com') {
+  if (!user || user.role !== 'admin') {
     return null;
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex">
-        <aside className={`bg-white border-r border-blue-100 shadow-lg transition-all duration-300 ease-in-out ${
+        <aside className={`bg-white border-r border-green-100 shadow-lg transition-all duration-300 ease-in-out ${
           sidebarOpen ? 'w-64' : 'w-20'
         } fixed inset-y-0 z-30`}>
           <div className="flex flex-col h-full">
-            <div className="p-4 border-b border-blue-100 flex items-center justify-between bg-gradient-to-r from-blue-50 to-white">
+            <div className="p-4 border-b border-green-100 flex items-center justify-between bg-gradient-to-r from-green-50 to-white">
               <div className="flex items-center gap-3">
                 {sidebarOpen ? (
-                  <div className="w-36 h-10 flex items-center justify-center">
-                    <img 
-                      src="/logo-hoi-tho-xanh.svg" 
-                      alt="Hơi Thở Xanh" 
-                      className="w-full h-full object-contain" 
+                  <div className="w-44 h-14 flex items-center justify-center">
+                    <img
+                      src="/Refurbest.png"
+                      alt="Refurbest"
+                      className="w-full h-full object-contain"
                     />
                   </div>
                 ) : (
-                  <div className="w-10 h-10 flex items-center justify-center">
-                    <img 
-                      src="/logo-hoi-tho-xanh.svg" 
-                      alt="Hơi Thở Xanh" 
-                      className="w-full h-full object-contain" 
+                  <div className="w-12 h-12 flex items-center justify-center">
+                    <img
+                      src="/Refurbest.png"
+                      alt="Refurbest"
+                      className="w-full h-full object-contain"
                     />
                   </div>
                 )}
               </div>
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="p-2 hover:bg-blue-50 rounded-lg transition-colors text-gray-600 hover:text-blue-600"
+                className="p-2 hover:bg-green-50 rounded-lg transition-colors text-gray-600 hover:text-green-600"
               >
                 {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
@@ -121,8 +135,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     whileTap={{ scale: 0.98 }}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                       isActive
-                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md'
-                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                        ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md'
+                        : 'text-gray-700 hover:bg-green-50 hover:text-green-600'
                     }`}
                   >
                     <Icon className="w-5 h-5 shrink-0" />
@@ -132,7 +146,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               })}
             </nav>
 
-            <div className="p-4 border-t border-blue-100">
+            <div className="p-4 border-t border-green-100">
               <motion.button
                 onClick={handleSignOut}
                 whileHover={{ scale: 1.02 }}

@@ -23,18 +23,17 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    if (isLogin && email.trim().toLowerCase() === 'admin@hoithoxanh.com') {
-      setLoading(false);
-      setError('Email không hợp lệ');
-      return;
-    }
-
     const result = isLogin
       ? await signIn(email, password)
       : await signUp(email, password, fullName);
 
     if (result.success) {
-      router.push('/');
+      // If admin, go straight to admin dashboard
+      if (email.trim().toLowerCase() === 'admin@refurbest.vn') {
+        router.push('/admin/dashboard');
+      } else {
+        router.push('/');
+      }
     } else {
       setError(result.error || "Đăng nhập thất bại");
     }
@@ -43,7 +42,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-white relative overflow-hidden flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-green-50 to-white relative overflow-hidden flex items-center justify-center p-4">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           animate={{
@@ -55,7 +54,7 @@ export default function LoginPage() {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-sky-200 to-blue-200 rounded-full blur-3xl"
+          className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-green-200 to-green-200 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
@@ -68,7 +67,7 @@ export default function LoginPage() {
             ease: "easeInOut",
             delay: 1,
           }}
-          className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200 to-indigo-200 rounded-full blur-3xl"
+          className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-green-200 to-indigo-200 rounded-full blur-3xl"
         />
       </div>
 
@@ -92,7 +91,7 @@ export default function LoginPage() {
               <motion.div
                 whileHover={{ scale: 1.1, rotate: 360 }}
                 transition={{ duration: 0.6 }}
-                className="w-24 h-24 bg-gradient-to-br from-sky-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl"
+                className="w-24 h-24 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl"
               >
                 <UserIcon className="w-12 h-12 text-white" />
               </motion.div>
@@ -100,7 +99,7 @@ export default function LoginPage() {
               <h1 className="text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">
                 {isLogin ? "Đăng nhập" : "Đăng ký"}
               </h1>
-              <p className="text-sky-600 font-semibold text-lg">Hơi Thở Xanh</p>
+              <p className="text-green-600 font-semibold text-lg">Refurbest</p>
             </motion.div>
           </div>
 
@@ -128,14 +127,14 @@ export default function LoginPage() {
                   className="space-y-2"
                 >
                   <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                    <UserIcon className="w-4 h-4 text-sky-500" />
+                    <UserIcon className="w-4 h-4 text-green-500" />
                     Họ và tên
                   </label>
                   <input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full px-5 py-3.5 border-2 border-gray-200 rounded-xl focus:border-sky-500 focus:ring-4 focus:ring-sky-100 transition-all font-medium"
+                    className="w-full px-5 py-3.5 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all font-medium"
                     placeholder="Nhập họ và tên"
                     required={!isLogin}
                   />
@@ -145,14 +144,14 @@ export default function LoginPage() {
 
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <Mail className="w-4 h-4 text-sky-500" />
+                <Mail className="w-4 h-4 text-green-500" />
                 Email
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-5 py-3.5 border-2 border-gray-200 rounded-xl focus:border-sky-500 focus:ring-4 focus:ring-sky-100 transition-all font-medium"
+                className="w-full px-5 py-3.5 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all font-medium"
                 placeholder="Nhập email"
                 required
               />
@@ -160,7 +159,7 @@ export default function LoginPage() {
 
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <Lock className="w-4 h-4 text-sky-500" />
+                <Lock className="w-4 h-4 text-green-500" />
                 Mật khẩu
               </label>
               <div className="relative">
@@ -168,14 +167,14 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-5 py-3.5 pr-12 border-2 border-gray-200 rounded-xl focus:border-sky-500 focus:ring-4 focus:ring-sky-100 transition-all font-medium"
+                  className="w-full px-5 py-3.5 pr-12 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all font-medium"
                   placeholder="Nhập mật khẩu"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-sky-600 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-green-600 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -190,7 +189,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white h-14 text-lg font-bold shadow-xl hover:shadow-2xl transition-all"
+                className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white h-14 text-lg font-bold shadow-xl hover:shadow-2xl transition-all"
               >
                 {loading ? (
                   <span className="flex items-center gap-3">
@@ -219,7 +218,7 @@ export default function LoginPage() {
                   setIsLogin(!isLogin);
                   setError("");
                 }}
-                className="w-full text-center text-base text-sky-600 hover:text-sky-700 font-bold transition-colors"
+                className="w-full text-center text-base text-green-600 hover:text-green-700 font-bold transition-colors"
               >
                 {isLogin 
                   ? "Chưa có tài khoản? Đăng ký ngay" 
@@ -232,7 +231,7 @@ export default function LoginPage() {
               onClick={() => router.push("/")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="w-full flex items-center justify-center gap-2 text-gray-600 hover:text-sky-600 transition-colors font-medium"
+              className="w-full flex items-center justify-center gap-2 text-gray-600 hover:text-green-600 transition-colors font-medium"
             >
               <Home className="w-5 h-5" />
               Về trang chủ

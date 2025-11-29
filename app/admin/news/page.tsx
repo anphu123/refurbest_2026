@@ -11,6 +11,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
+import { uploadToImgbb } from '@/lib/imgbb';
 
 // Rich Text Editor Component với Markdown + Toolbar
 function ContentEditor({ value, onChange }: { value: string; onChange: (value: string) => void }) {
@@ -65,7 +66,7 @@ function ContentEditor({ value, onChange }: { value: string; onChange: (value: s
   ];
 
   return (
-    <div className="border border-gray-300 rounded-lg overflow-hidden focus-within:border-sky-500 focus-within:ring-2 focus-within:ring-sky-100">
+    <div className="border border-gray-300 rounded-lg overflow-hidden focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-100">
       {/* Toolbar */}
       <div className="flex items-center gap-1 p-2 bg-gray-50 border-b border-gray-200 flex-wrap">
         {toolbarButtons.map((btn, idx) => {
@@ -78,7 +79,7 @@ function ContentEditor({ value, onChange }: { value: string; onChange: (value: s
                 e.preventDefault();
                 btn.action();
               }}
-              className="p-2 hover:bg-gray-200 rounded text-gray-700 hover:text-sky-600 transition-colors"
+              className="p-2 hover:bg-gray-200 rounded text-gray-700 hover:text-green-600 transition-colors"
               title={btn.label}
             >
               <Icon className="w-4 h-4" />
@@ -91,7 +92,7 @@ function ContentEditor({ value, onChange }: { value: string; onChange: (value: s
           onClick={() => setShowPreview(!showPreview)}
           className={`px-3 py-1.5 text-sm rounded transition-colors ${
             showPreview 
-              ? 'bg-sky-500 text-white' 
+              ? 'bg-green-500 text-white' 
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
           }`}
         >
@@ -172,6 +173,7 @@ export default function NewsPage() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<{ message: string; type?: "success" | "error" | "info" } | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -235,6 +237,20 @@ export default function NewsPage() {
       og_image: "",
     });
     setShowModal(true);
+  };
+
+  const handleImageUpload = async (file: File, field: 'image' | 'og_image') => {
+    if (!file) return;
+    try {
+      setUploading(true);
+      const url = await uploadToImgbb(file);
+      setFormData(prev => ({ ...prev, [field]: url }));
+      setToast({ message: 'Tải ảnh lên thành công', type: 'success' });
+    } catch (e: any) {
+      setToast({ message: `Lỗi tải ảnh: ${e.message}`, type: 'error' });
+    } finally {
+      setUploading(false);
+    }
   };
 
   const generateSlug = (text: string) => {
@@ -458,14 +474,14 @@ export default function NewsPage() {
           <input
             type="text"
             placeholder="Tìm kiếm tin tức..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         <Button
           onClick={handleAddNews}
-          className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white"
+          className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
         >
           <Plus className="w-5 h-5 mr-2" />
           Viết tin tức mới
@@ -491,7 +507,7 @@ export default function NewsPage() {
             {searchQuery ? "Thử tìm kiếm với từ khóa khác" : "Viết tin tức đầu tiên của bạn"}
           </p>
           {!searchQuery && (
-            <Button onClick={handleAddNews} className="bg-sky-500 hover:bg-sky-600 text-white">
+            <Button onClick={handleAddNews} className="bg-green-500 hover:bg-green-600 text-white">
               <Plus className="w-5 h-5 mr-2" />
               Viết tin tức mới
             </Button>
@@ -563,7 +579,7 @@ export default function NewsPage() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleEditNews(item.id)}
-                          className="p-2 text-gray-600 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
+                          className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
@@ -639,7 +655,7 @@ export default function NewsPage() {
                           meta_title: formData.meta_title || e.target.value,
                         });
                       }}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
                       placeholder="Nhập tiêu đề tin tức"
                       required
                     />
@@ -654,7 +670,7 @@ export default function NewsPage() {
                       type="text"
                       value={formData.slug}
                       onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
                       placeholder="tin-tuc-san-pham"
                     />
                     <p className="text-xs text-gray-500 mt-1">Tự động tạo từ tiêu đề nếu để trống</p>
@@ -662,21 +678,29 @@ export default function NewsPage() {
 
                   {/* Image */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Hình ảnh (URL)
-                    </label>
-                    <input
-                      type="url"
-                      value={formData.image}
-                      onChange={(e) => setFormData({ ...formData, image: e.target.value, og_image: formData.og_image || e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
-                      placeholder="https://example.com/image.jpg"
-                    />
-                    {formData.image && (
-                      <div className="mt-2 relative w-full h-48 rounded-lg overflow-hidden border border-gray-200">
-                        <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Hình ảnh đại diện</label>
+                    <div className="flex items-center gap-4 p-3 border rounded-lg bg-gray-50">
+                      {formData.image && (
+                        <div className="w-32 h-20 rounded-md overflow-hidden border bg-white flex-shrink-0">
+                          <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className="flex-1 space-y-2">
+                        <input
+                          type="text"
+                          value={formData.image || ''}
+                          onChange={(e) => setFormData({ ...formData, image: e.target.value, og_image: formData.og_image || e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                          placeholder="Dán URL ảnh vào đây"
+                        />
+                        <Button asChild variant="outline" className="w-full text-xs" disabled={uploading}>
+                          <label className="cursor-pointer">
+                            {uploading ? "Đang tải..." : "Hoặc tải ảnh từ máy"}
+                            <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files && handleImageUpload(e.target.files[0], 'image')} />
+                          </label>
+                        </Button>
                       </div>
-                    )}
+                    </div>
                   </div>
 
                   {/* Excerpt */}
@@ -688,7 +712,7 @@ export default function NewsPage() {
                       value={formData.excerpt}
                       onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                       rows={2}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
                       placeholder="Mô tả ngắn về tin tức..."
                     />
                   </div>
@@ -713,7 +737,7 @@ export default function NewsPage() {
                       type="text"
                       value={formData.author_name}
                       onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
                       placeholder="Tên tác giả"
                     />
                   </div>
@@ -727,7 +751,7 @@ export default function NewsPage() {
                       <select
                         value={formData.status}
                         onChange={(e) => setFormData({ ...formData, status: e.target.value as 'draft' | 'published' | 'archived' })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
                       >
                         <option value="draft">Bản nháp</option>
                         <option value="published">Đã xuất bản</option>
@@ -742,7 +766,7 @@ export default function NewsPage() {
                         type="datetime-local"
                         value={formData.published_at}
                         onChange={(e) => setFormData({ ...formData, published_at: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
                       />
                     </div>
                   </div>
@@ -760,7 +784,7 @@ export default function NewsPage() {
                           type="text"
                           value={formData.meta_title}
                           onChange={(e) => setFormData({ ...formData, meta_title: e.target.value })}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
                           placeholder="SEO title (để trống sẽ dùng tiêu đề)"
                         />
                       </div>
@@ -773,7 +797,7 @@ export default function NewsPage() {
                           value={formData.meta_description}
                           onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })}
                           rows={2}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
                           placeholder="Mô tả SEO (150-160 ký tự)"
                         />
                       </div>
@@ -786,23 +810,36 @@ export default function NewsPage() {
                           type="text"
                           value={formData.meta_keywords}
                           onChange={(e) => setFormData({ ...formData, meta_keywords: e.target.value })}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
                           placeholder="từ khóa 1, từ khóa 2, từ khóa 3"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          OG Image (Social Media)
-                        </label>
-                        <input
-                          type="url"
-                          value={formData.og_image}
-                          onChange={(e) => setFormData({ ...formData, og_image: e.target.value })}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
-                          placeholder="https://example.com/og-image.jpg"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">Hình ảnh hiển thị khi chia sẻ lên mạng xã hội (để trống sẽ dùng hình ảnh chính)</p>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">OG Image (Khi chia sẻ)</label>
+                        <div className="flex items-center gap-4 p-3 border rounded-lg bg-gray-50">
+                          {formData.og_image && (
+                            <div className="w-32 h-20 rounded-md overflow-hidden border bg-white flex-shrink-0">
+                              <img src={formData.og_image} alt="OG Preview" className="w-full h-full object-cover" />
+                            </div>
+                          )}
+                          <div className="flex-1 space-y-2">
+                            <input
+                              type="text"
+                              value={formData.og_image || ''}
+                              onChange={(e) => setFormData({ ...formData, og_image: e.target.value })}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                              placeholder="Dán URL ảnh vào đây"
+                            />
+                            <Button asChild variant="outline" className="w-full text-xs" disabled={uploading}>
+                              <label className="cursor-pointer">
+                                {uploading ? "Đang tải..." : "Hoặc tải ảnh từ máy"}
+                                <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files && handleImageUpload(e.target.files[0], 'og_image')} />
+                              </label>
+                            </Button>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">Để trống sẽ dùng ảnh đại diện.</p>
                       </div>
                     </div>
                   </div>
@@ -818,7 +855,7 @@ export default function NewsPage() {
                     <Button
                       onClick={isEditMode ? handleUpdateNews : handleCreateNews}
                       disabled={isCreating || isUpdating}
-                      className="flex-1 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {(isCreating || isUpdating) ? (
                         <>

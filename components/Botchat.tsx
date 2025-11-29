@@ -100,6 +100,8 @@ export default function Botchat() {
   const [agentInfo, setAgentInfo] = useState<{ name: string; avatar: string | null; title: string } | null>(null);
   const shouldAutoScrollRef = useRef(true); // Track if we should auto scroll
   const isUserScrollingRef = useRef(false); // Track if user is manually scrolling
+  const isSendingRef = useRef(false); // Extra protection against duplicate sends
+  const lastSendTimeRef = useRef(0); // Track last send time for rate limiting
   const { user } = useAuthStore();
   const router = useRouter();
 
@@ -128,8 +130,7 @@ export default function Botchat() {
           .maybeSingle();
 
         if (error) {
-          console.error('Error fetching agent info:', error);
-          // Use default values
+          // Silently use default values if database is not accessible
           setAgentInfo({ name: 'Chị Lan', avatar: null, title: 'Tư vấn viên' });
         } else if (data) {
           setAgentInfo({
@@ -285,7 +286,17 @@ export default function Botchat() {
   };
 
   const sendMessage = async () => {
-    if (!user || !message.trim() || sendingMessage || !sessionId) {
+    // Rate limiting: prevent sending too fast (min 3 seconds between messages)
+    const now = Date.now();
+    const timeSinceLastSend = now - lastSendTimeRef.current;
+    if (timeSinceLastSend < 3000 && lastSendTimeRef.current > 0) {
+      setError('Vui lòng đợi vài giây trước khi gửi tin nhắn tiếp theo');
+      setTimeout(() => setError(null), 3000);
+      return;
+    }
+    
+    // Prevent duplicate sends with double check
+    if (!user || !message.trim() || sendingMessage || !sessionId || isSendingRef.current) {
       if (!user) {
         setError('Vui lòng đăng nhập để gửi tin nhắn');
         setTimeout(() => setError(null), 3000);
@@ -293,7 +304,12 @@ export default function Botchat() {
       return;
     }
     
+    lastSendTimeRef.current = now;
+    
     const msgText = message.trim();
+    
+    // Set both state and ref to prevent any duplicate
+    isSendingRef.current = true;
     setMessage('');
     setSendingMessage(true);
     setError(null);
@@ -361,6 +377,7 @@ export default function Botchat() {
         });
 
         const aiData = await aiResponse.json();
+        console.log('AI Response:', aiData);
 
         if (aiData.success && aiData.message) {
           // AI responded successfully
@@ -449,6 +466,7 @@ export default function Botchat() {
       setTimeout(() => setError(null), 5000);
     } finally {
       setSendingMessage(false);
+      isSendingRef.current = false; // Reset ref
     }
   };
 
@@ -482,7 +500,7 @@ export default function Botchat() {
       {/* Chat Button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-24 right-8 z-50 bg-gradient-to-r from-sky-500 to-sky-600 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all"
+        className="fixed bottom-24 right-8 z-50 bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all"
         whileHover={{ scale: 1.15, transition: { duration: 0.15 } }}
         whileTap={{ scale: 0.85, transition: { duration: 0.1 } }}
         animate={{ 
@@ -526,19 +544,9 @@ export default function Botchat() {
       {/* Liên hệ Button */}
       <motion.a
         href="tel:18002097"
-        className="fixed bottom-8 right-8 z-50 bg-gradient-to-r from-sky-500 to-blue-600 text-white px-6 py-3 rounded-full shadow-2xl hover:shadow-3xl transition-all flex items-center gap-2 font-semibold"
+        className="fixed bottom-8 right-8 z-50 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-2 font-semibold"
         whileHover={{ scale: 1.1, y: -2, transition: { duration: 0.1, ease: "easeOut" } }}
         whileTap={{ scale: 0.9, transition: { duration: 0.05, ease: "easeOut" } }}
-        animate={{
-          boxShadow: ["0 10px 30px rgba(14, 165, 233, 0.3)", "0 15px 40px rgba(59, 130, 246, 0.5)", "0 10px 30px rgba(14, 165, 233, 0.3)"]
-        }}
-        transition={{
-          boxShadow: {
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }
-        }}
       >
         <motion.div
           animate={{ rotate: [0, -12, 12, -12, 12, 0] }}
@@ -563,10 +571,10 @@ export default function Botchat() {
             className="fixed bottom-40 right-8 z-[60] w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-sky-500 to-sky-400 text-white p-4">
+            <div className="bg-gradient-to-r from-green-500 to-green-400 text-white p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                  <Bot className="w-6 h-6 text-sky-500" />
+                  <Bot className="w-6 h-6 text-green-500" />
                 </div>
                 <div>
                   <h3 className="font-bold">Hỗ trợ trực tuyến</h3>
@@ -580,8 +588,8 @@ export default function Botchat() {
               {currentView === 'welcome' && (
                 <div className="space-y-4">
                   <div className="flex gap-3">
-                    <div className="w-8 h-8 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Bot className="w-4 h-4 text-sky-500" />
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Bot className="w-4 h-4 text-green-500" />
                     </div>
                     <div className="bg-white rounded-lg rounded-tl-none p-3 shadow-sm max-w-[80%]">
                       <p className="text-sm text-gray-700">
@@ -591,8 +599,8 @@ export default function Botchat() {
                   </div>
 
                   <div className="flex gap-3">
-                    <div className="w-8 h-8 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Bot className="w-4 h-4 text-sky-500" />
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Bot className="w-4 h-4 text-green-500" />
                     </div>
                     <div className="bg-white rounded-lg rounded-tl-none p-3 shadow-sm max-w-[80%]">
                       <p className="text-sm text-gray-700 mb-2">
@@ -601,11 +609,11 @@ export default function Botchat() {
                       <div className="space-y-2">
                         <motion.button 
                           onClick={() => handleViewChange('orders')}
-                          className="block w-full text-left text-sm bg-gradient-to-r from-sky-50 to-blue-50 hover:from-sky-100 hover:to-blue-100 rounded-lg px-3 py-2 transition-all flex items-center gap-2 border border-sky-200 hover:border-sky-400 hover:shadow-md"
+                          className="block w-full text-left text-sm bg-gradient-to-r from-green-50 to-green-50 hover:from-green-100 hover:to-green-100 rounded-lg px-3 py-2 transition-all flex items-center gap-2 border border-green-200 hover:border-green-400 hover:shadow-md"
                           whileHover={{ scale: 1.02, x: 3, transition: { duration: 0.15 } }}
                           whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
                         >
-                          <Package className="w-4 h-4 text-sky-600" /> Tra cứu đơn hàng
+                          <Package className="w-4 h-4 text-green-600" /> Tra cứu đơn hàng
                         </motion.button>
                         <motion.button 
                           onClick={() => handleViewChange('warranty')}
@@ -682,8 +690,8 @@ export default function Botchat() {
                                   className="w-8 h-8 rounded-full object-cover"
                                 />
                               ) : (
-                                <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center">
-                                  <Bot className="w-4 h-4 text-sky-600" />
+                                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                  <Bot className="w-4 h-4 text-green-600" />
                                 </div>
                               )}
                             </div>
@@ -705,7 +713,7 @@ export default function Botchat() {
                             <div
                               className={`rounded-lg p-3 ${
                                 msg.is_from_user
-                                  ? 'bg-sky-500 text-white rounded-tr-none'
+                                  ? 'bg-green-500 text-white rounded-tr-none'
                                   : 'bg-gray-200 text-gray-900 rounded-tl-none'
                               }`}
                             >
@@ -762,7 +770,7 @@ export default function Botchat() {
                               </div>
                             )}
                             </div>
-                            <p className={`text-xs mt-1 ${msg.is_from_user ? 'text-sky-100 text-right' : 'text-gray-500'}`}>
+                            <p className={`text-xs mt-1 ${msg.is_from_user ? 'text-green-100 text-right' : 'text-gray-500'}`}>
                               {new Date(msg.created_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
                             </p>
                           </div>
@@ -807,7 +815,7 @@ export default function Botchat() {
                   </div>
                   {loading ? (
                     <div className="text-center py-8 text-gray-500">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-500 mx-auto mb-2"></div>
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-500 mx-auto mb-2"></div>
                       Đang tải...
                     </div>
                   ) : orders.length === 0 ? (
@@ -853,7 +861,7 @@ export default function Botchat() {
                   </div>
                   {loading ? (
                     <div className="text-center py-8 text-gray-500">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-500 mx-auto mb-2"></div>
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-500 mx-auto mb-2"></div>
                       Đang tải...
                     </div>
                   ) : warrantyProducts.length === 0 ? (
@@ -898,14 +906,17 @@ export default function Botchat() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
-                      if (!sendingMessage && message.trim()) {
+                      e.stopPropagation();
+                      if (!sendingMessage && !aiResponding && message.trim()) {
                         if (currentView === 'chat') {
                           sendMessage();
                         } else if (user && message.trim()) {
                           // Auto switch to chat and send
                           handleViewChange('chat');
                           setTimeout(() => {
-                            sendMessage();
+                            if (message.trim()) {
+                              sendMessage();
+                            }
                           }, 100);
                         }
                       }
@@ -917,7 +928,7 @@ export default function Botchat() {
                       : "Viết câu hỏi của bạn tại đây (Enter để gửi)"
                   }
                   disabled={sendingMessage || aiResponding}
-                  className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition-all hover:border-sky-300 disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all hover:border-green-300 disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
                 <motion.button 
                   onClick={(e) => {
@@ -942,7 +953,7 @@ export default function Botchat() {
                     }
                   }}
                   disabled={sendingMessage}
-                  className="bg-gradient-to-r from-sky-500 to-blue-600 text-white p-2 rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  className="bg-gradient-to-r from-green-500 to-green-600 text-white p-2 rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   whileHover={{ scale: !sendingMessage ? 1.1 : 1, transition: { duration: 0.15 } }}
                   whileTap={{ scale: !sendingMessage ? 0.9 : 1, transition: { duration: 0.1 } }}
                 >

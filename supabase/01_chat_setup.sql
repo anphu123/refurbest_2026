@@ -70,7 +70,7 @@ begin
       return false;
     end if;
     
-    return (user_email_val = 'admin@hoithoxanh.com' or user_role_val = 'admin');
+    return (user_email_val = 'admin@dienthoaivui.vn' or user_role_val = 'admin');
   exception when others then
     return false;
   end;

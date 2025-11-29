@@ -29,21 +29,40 @@ export default function CategorySection({ title, categoryIds, onCategoryClick }:
           // Map icon names to components
           const LucideIcons = require('lucide-react');
           const iconMap: { [key: string]: any } = {
-            'Wind': LucideIcons.Wind,
-            'Zap': LucideIcons.Zap,
-            'Shield': LucideIcons.Shield,
-            'Sun': LucideIcons.Sun,
-            'Droplets': LucideIcons.Droplets,
-            'Home': LucideIcons.Home,
-            'Activity': LucideIcons.Activity,
-            'Leaf': LucideIcons.Leaf,
-            'Sparkles': LucideIcons.Sparkles,
-            'Filter': LucideIcons.Filter,
-            'AirVent': LucideIcons.Filter,
+            // Phone store focused icons
+            'Smartphone': LucideIcons.Smartphone,
+            'Tablet': LucideIcons.Tablet,
+            'Headphones': LucideIcons.Headphones,
+            'Mic': LucideIcons.Mic,
+            'Speaker': LucideIcons.Speaker,
+            'Watch': LucideIcons.Watch,
+            'Camera': LucideIcons.Camera,
+            'Usb': LucideIcons.Usb,
+            'Cable': (LucideIcons as any).Cable || LucideIcons.Plug,
+            'Battery': LucideIcons.Battery,
+            'Bluetooth': LucideIcons.Bluetooth,
+            'Keyboard': LucideIcons.Keyboard,
+            'Mouse': LucideIcons.Mouse,
+            'Monitor': LucideIcons.Monitor,
+            'Laptop': LucideIcons.Laptop,
+
+            // Backward compatibility with old icons
+            'Wind': LucideIcons.Smartphone,
+            'Zap': LucideIcons.Smartphone,
+            'Shield': LucideIcons.Smartphone,
+            'Sun': LucideIcons.Smartphone,
+            'Droplets': LucideIcons.Smartphone,
+            'Home': LucideIcons.Smartphone,
+            'Activity': LucideIcons.Smartphone,
+            'Leaf': LucideIcons.Smartphone,
+            'Sparkles': LucideIcons.Smartphone,
+            'Filter': LucideIcons.Smartphone,
+            'AirVent': LucideIcons.Smartphone,
           };
           const mappedCategories = data.map(cat => ({
             ...cat,
-            icon: iconMap[cat.icon] || LucideIcons.Wind
+            icon: iconMap[cat.icon] || LucideIcons.Smartphone,
+            image: cat.image || null,
           }));
           setCategories(mappedCategories);
         } else {
@@ -96,8 +115,15 @@ export default function CategorySection({ title, categoryIds, onCategoryClick }:
             {/* Background gradient on hover */}
             <div className="absolute inset-0 bg-gradient-to-br from-red-50 to-orange-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
-            <div className="relative z-10 text-5xl group-hover:scale-110 transition-transform duration-300">
-              {category.icon && React.createElement(category.icon, { className: "w-12 h-12" })}
+            <div className="relative z-10 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-16 h-16 rounded-xl flex items-center justify-center overflow-hidden bg-white border border-gray-100 mx-auto">
+                {category.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={category.image} alt={category.name} className="w-14 h-14 object-contain" />
+                ) : (
+                  category.icon && React.createElement(category.icon, { className: "w-12 h-12" })
+                )}
+              </div>
             </div>
             <span className="relative z-10 text-sm text-center font-semibold text-gray-700 group-hover:text-red-600 transition-colors leading-tight">
               {category.name}

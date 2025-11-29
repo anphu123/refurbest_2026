@@ -145,7 +145,7 @@ export default function WishlistPage() {
               href="/home"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-lg transition-all"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-lg transition-all"
             >
               <ShoppingBag className="w-5 h-5" />
               Khám phá sản phẩm

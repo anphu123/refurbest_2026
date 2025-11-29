@@ -62,7 +62,7 @@ export default function LoginModal({ isOpen, onClose, showMessage = false, initi
 
     if (result.success) {
       // Check if user is admin and redirect to admin dashboard
-      const isAdmin = email === 'admin@hoithoxanh.com' || email.toLowerCase() === 'admin@hoithoxanh.com';
+      const isAdmin = email === 'admin@refurbest.vn' || email.toLowerCase() === 'admin@refurbest.vn';
       
       onClose();
       setEmail("");
@@ -129,7 +129,7 @@ export default function LoginModal({ isOpen, onClose, showMessage = false, initi
 
               {/* Message for checkout flow */}
               {showMessage && (
-                <div className="mx-6 mt-4 p-3 bg-sky-50 border border-sky-200 rounded-lg">
+                <div className="mx-6 mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                   <p className="text-sm text-sky-900 text-center">
                     Vui lòng đăng nhập để tiếp tục thanh toán
                   </p>
@@ -163,7 +163,7 @@ export default function LoginModal({ isOpen, onClose, showMessage = false, initi
                           type="text"
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all text-sm"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
                           placeholder="Nhập họ và tên"
                           required
                         />
@@ -180,7 +180,7 @@ export default function LoginModal({ isOpen, onClose, showMessage = false, initi
                           type="tel"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all text-sm"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
                           placeholder="Nhập số điện thoại"
                           required
                         />
@@ -196,7 +196,7 @@ export default function LoginModal({ isOpen, onClose, showMessage = false, initi
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all text-sm"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
                         placeholder="Nhập email"
                         required
                       />
@@ -212,7 +212,7 @@ export default function LoginModal({ isOpen, onClose, showMessage = false, initi
                           type={showPassword ? "text" : "password"}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="w-full px-4 py-2.5 pr-11 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all text-sm"
+                          className="w-full px-4 py-2.5 pr-11 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm"
                           placeholder="Nhập mật khẩu"
                           required
                         />
@@ -234,7 +234,7 @@ export default function LoginModal({ isOpen, onClose, showMessage = false, initi
                           onClick={() => {
                             alert("Chức năng quên mật khẩu sẽ được cập nhật sớm!");
                           }}
-                          className="text-sm text-sky-600 hover:text-sky-700 font-medium transition-colors"
+                          className="text-sm text-green-600 hover:text-green-700 font-medium transition-colors"
                         >
                           Quên mật khẩu?
                         </button>
@@ -272,14 +272,14 @@ export default function LoginModal({ isOpen, onClose, showMessage = false, initi
                         {isLogin ? (
                           <>
                             Chưa có tài khoản?{" "}
-                            <span className="text-sky-600 hover:text-sky-700 font-semibold">
+                            <span className="text-green-600 hover:text-green-700 font-semibold">
                               Đăng ký ngay
                             </span>
                           </>
                         ) : (
                           <>
                             Đã có tài khoản?{" "}
-                            <span className="text-sky-600 hover:text-sky-700 font-semibold">
+                            <span className="text-green-600 hover:text-green-700 font-semibold">
                               Đăng nhập ngay
                             </span>
                           </>

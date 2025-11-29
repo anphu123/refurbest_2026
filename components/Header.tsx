@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingCart, Search, MapPin, User, Phone, Menu, Heart, Sparkles, Truck, Recycle, LogOut } from "lucide-react";
+import { ShoppingCart, MapPin, User, Phone, Menu, Heart, Sparkles, Truck, Recycle, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
@@ -10,10 +10,11 @@ import { useCartStore } from "@/lib/stores/cart";
 import CartDrawer from "@/components/CartDrawer";
 import LoginModal from "@/components/LoginModal";
 import { useAuthStore } from "@/lib/stores/auth";
- 
+import { useSiteSettings } from "@/lib/hooks/useSiteSettings";
+import SearchBox from "@/components/SearchBox";
+
 
 export default function Header() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
   const [showTopBanner, setShowTopBanner] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -28,6 +29,7 @@ export default function Header() {
   const pathname = usePathname();
   const [activeSection, setActiveSection] = useState<string>('');
   const [lastClickedSection, setLastClickedSection] = useState<string>('');
+  const { settings } = useSiteSettings();
   const [wishlistCount, setWishlistCount] = useState(0);
   const hasScrolledToHashRef = useRef(false);
 
@@ -43,7 +45,7 @@ export default function Header() {
 
     const handleScroll = () => {
       const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-      
+
       // If at top, clear active section
       if (scrollY < 100) {
         setActiveSection('');
@@ -77,7 +79,7 @@ export default function Header() {
           const rect = section.getBoundingClientRect();
           const sectionTop = rect.top + scrollY;
           const sectionBottom = sectionTop + section.offsetHeight;
-          
+
           // Calculate how much of this section is visible above the header offset line
           const viewportTop = scrollY + headerOffset;
           const visibleTop = Math.max(viewportTop, sectionTop);
@@ -118,33 +120,20 @@ export default function Header() {
     };
 
     // Check hash on mount and scroll to it
-    const hash = window.location.hash.substring(1);
-    if (!hasScrolledToHashRef.current && hash && sections.includes(hash)) {
-      setLastClickedSection(hash);
-      setTimeout(() => {
-        const section = document.getElementById(hash);
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          const y = rect.top + scrollTop - headerOffset;
-          window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
-          hasScrolledToHashRef.current = true;
-        }
-      }, 300);
-    }
+
 
     // Throttle scroll handler với delay
     let ticking = false;
     let lastScrollY = 0;
     const throttledScroll = () => {
       const currentScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-      
+
       // Chỉ update nếu scroll thay đổi đáng kể (ít nhất 10px) để giảm re-render
       if (Math.abs(currentScrollY - lastScrollY) < 10 && !ticking) {
         return;
       }
       lastScrollY = currentScrollY;
-      
+
       if (!ticking) {
         window.requestAnimationFrame(() => {
           handleScroll();
@@ -160,22 +149,41 @@ export default function Header() {
     return () => {
       window.removeEventListener('scroll', throttledScroll);
     };
-  }, [pathname, lastClickedSection]);
+  }, [pathname]);
 
   useEffect(() => {
     hasScrolledToHashRef.current = false;
   }, [pathname]);
 
-  // Update lastClickedSection when user clicks a section link
-  const handleSectionClick = (sectionId: string) => {
-    setLastClickedSection(sectionId);
-    handleScrollToSection(sectionId);
-  };
+
+  // Scroll to hash on initial load or path change
+  useEffect(() => {
+    if (pathname !== '/home' && pathname !== '/') return;
+
+    const sections = ['san-pham', 'thong-tin', 'hoi-dap', 'thuong-hieu', 'tu-van'];
+    const headerOffset = 150;
+
+    const hash = window.location.hash.substring(1);
+    if (!hasScrolledToHashRef.current && hash && sections.includes(hash)) {
+      setLastClickedSection(hash); // Set for initial state
+      setTimeout(() => {
+        const section = document.getElementById(hash);
+        if (section) {
+          const rect = section.getBoundingClientRect();
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const y = rect.top + scrollTop - headerOffset;
+          window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+          hasScrolledToHashRef.current = true;
+        }
+      }, 300); // Delay to allow page layout
+    }
+  }, [pathname]);
+
 
   // Helper function to check if link is active
   const isLinkActive = (href: string, sectionId?: string) => {
     const isHomePage = pathname === '/home' || pathname === '/';
-    
+
     if (sectionId) {
       // For section links, check if active section matches
       // If we're on home page and no section is active yet, don't highlight section links
@@ -230,15 +238,15 @@ export default function Header() {
           setWishlistCount(0);
         }
       };
-      
+
       updateWishlistCount();
-      
+
       // Listen for storage changes (when wishlist is updated from other tabs/components)
       window.addEventListener('storage', updateWishlistCount);
-      
+
       // Also listen for custom event when wishlist is updated in same tab
       window.addEventListener('wishlistUpdated', updateWishlistCount);
-      
+
       return () => {
         window.removeEventListener('storage', updateWishlistCount);
         window.removeEventListener('wishlistUpdated', updateWishlistCount);
@@ -247,7 +255,7 @@ export default function Header() {
   }, []);
 
   // measure banner height so we can move it proportionally to scroll
-  
+
 
   useEffect(() => {
     if (!isClient) return;
@@ -272,7 +280,7 @@ export default function Header() {
     const updateOnScroll = () => {
       const currentScrollY = window.scrollY;
       const scrollDifference = Math.abs(currentScrollY - lastScrollY);
-      
+
       if (currentScrollY < 10) {
         if (!showTopBanner) setShowTopBanner(true);
         if (isScrolled) setIsScrolled(false);
@@ -306,16 +314,16 @@ export default function Header() {
   }, [showTopBanner, isScrolled]);
 
   return (
-    <header 
-      className={`sticky top-0 z-50 bg-white transition-shadow duration-300 relative overflow-hidden ${isScrolled ? 'shadow-xl' : 'shadow-medium'}`} 
-      style={{ position: 'sticky' }}
+    <header
+      className={`sticky top-0 z-50 bg-white transition-shadow duration-300 relative ${isScrolled ? 'shadow-xl' : 'shadow-medium'}`}
+      style={{ position: 'sticky', overflow: 'visible' }}
     >
       {/* Wrapper: banner + white header move together */}
       <div className={`transition-all duration-300 ease-in-out ${showTopBanner ? 'translate-y-0 mb-0' : '-translate-y-10 sm:-translate-y-11 -mb-10 sm:-mb-11'}`}>
         {/* Top Banner */}
         <div className="gradient-primary text-white text-xs h-10 sm:h-11 flex items-center">
         <div className="container mx-auto px-4 flex justify-center gap-4 md:gap-8 flex-wrap">
-          <span className="font-medium flex items-center gap-1.5 text-[10px] sm:text-xs"><Sparkles className="w-3 h-3 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Máy lọc không khí </span>Chính hãng</span>
+          <span className="font-medium flex items-center gap-1.5 text-[10px] sm:text-xs"><Phone className="w-3 h-3 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Điện thoại </span>Chính hãng</span>
           <span className="font-medium flex items-center gap-1.5 text-[10px] sm:text-xs"><Truck className="w-3 h-3 sm:w-4 sm:h-4" /> Giao nhanh <span className="hidden sm:inline">2H - </span>Miễn phí</span>
           <span className="font-medium flex items-center gap-1.5 text-[10px] sm:text-xs hidden md:flex"><Recycle className="w-3 h-3 sm:w-4 sm:h-4" /> Thu cũ đổi mới <span className="hidden lg:inline">- Trợ giá lên đến 30%</span></span>
         </div>
@@ -323,12 +331,12 @@ export default function Header() {
 
         {/* White header + nav */}
       {/* Main Header - Mobile Optimized */}
-      <div className="border-b border-blue-100">
+      <div className="border-b border-green-100">
         <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4">
           <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
             {/* Mobile Menu */}
-            <button 
-              className="lg:hidden p-2 hover:bg-blue-50 rounded-lg transition-colors"
+            <button
+              className="lg:hidden p-2 hover:bg-green-50 rounded-lg transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -336,29 +344,18 @@ export default function Header() {
 
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 sm:gap-3 shrink-0 group">
-              <div className="w-28 h-8 sm:w-36 sm:h-10 flex items-center justify-center">
-                <img src="/logo-hoi-tho-xanh.svg" alt="Hơi Thở Xanh" className="w-full h-full object-contain" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center">
+                <img src="/Refurbest.png" alt="Refurbest" className="w-full h-full object-contain" />
               </div>
             </Link>
 
             {/* Search Bar - Mobile Optimized */}
-            <div className="flex-1 max-w-2xl">
-              <div className="relative">
-                <Search className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Tìm máy lọc..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-8 sm:pl-12 pr-2 sm:pr-4 py-2 sm:py-3.5 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 sm:focus:ring-4 focus:ring-blue-100 transition-all font-medium text-xs sm:text-sm"
-                />
-              </div>
-            </div>
+            <SearchBox />
 
             {/* Actions - Mobile Optimized */}
             <div className="flex items-center gap-1 sm:gap-3">
               {/* Location */}
-              <button className="hidden xl:flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+              <button className="hidden xl:flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all">
                 <MapPin className="w-5 h-5" />
                 <div className="text-left">
                   <div className="text-[10px] text-gray-500 font-medium">Xem giá tại</div>
@@ -367,14 +364,14 @@ export default function Header() {
               </button>
 
               {/* Hotline - Mobile Icon Only */}
-              <a 
-                href="tel:18002097" 
-                className="flex lg:flex items-center gap-2 p-2 lg:px-4 lg:py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+              <a
+                href={`tel:${settings.phone.replace(/\s/g, '')}`}
+                className="flex lg:flex items-center gap-2 p-2 lg:px-4 lg:py-2 text-gray-700 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
               >
                 <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
                 <div className="text-left hidden lg:block">
                   <div className="text-[10px] text-gray-500 font-medium">Hotline</div>
-                  <div className="text-sm font-bold">1800 2097</div>
+                  <div className="text-sm font-bold">{settings.phone}</div>
                 </div>
               </a>
 
@@ -384,7 +381,7 @@ export default function Header() {
                   <Button variant="ghost" size="icon" className="relative hidden md:flex h-9 w-9 sm:h-10 sm:w-10 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-300">
                     <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
                     {wishlistCount > 0 && (
-                      <motion.span 
+                      <motion.span
                         className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center shadow-md"
                         animate={{ scale: [1, 1.2, 1] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
@@ -399,10 +396,10 @@ export default function Header() {
               {/* Cart - Always Visible */}
               <motion.div whileHover={{ scale: 1.1, transition: { duration: 0.05, ease: "easeOut" } }} whileTap={{ scale: 0.9, transition: { duration: 0.05 } }}>
                 <Link href="/cart">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="relative h-9 w-9 sm:h-10 sm:w-10 hover:bg-sky-50 hover:text-sky-600 transition-colors duration-300"
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="relative h-9 w-9 sm:h-10 sm:w-10 hover:bg-green-50 hover:text-green-600 transition-colors duration-300"
                   >
                     <motion.div
                       animate={{ rotate: [0, -10, 10, -10, 10, 0] }}
@@ -410,8 +407,8 @@ export default function Header() {
                     >
                       <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.div>
-                    <motion.span 
-                      className="absolute -top-1 -right-1 bg-gradient-to-r from-sky-500 to-blue-600 text-white text-[10px] font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center shadow-md"
+                    <motion.span
+                      className="absolute -top-1 -right-1 bg-gradient-to-r from-green-500 to-green-600 text-white text-[10px] font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center shadow-md"
                       animate={{ scale: [1, 1.15, 1] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
                     >
@@ -426,21 +423,21 @@ export default function Header() {
                 {isClient && user ? (
                   <>
                     {/* Mobile: Icon only */}
-                    <Link 
-                      href={user.email === 'admin@hoithoxanh.com' ? '/admin/dashboard' : '/account'}
+                    <Link
+                      href={user.email === 'admin@refurbest.vn' ? '/admin/dashboard' : '/account'}
                       className="lg:hidden"
                     >
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-9 w-9 sm:h-10 sm:w-10 hover:bg-sky-50 hover:text-sky-600"
+                        className="h-9 w-9 sm:h-10 sm:w-10 hover:bg-green-50 hover:text-green-600"
                       >
                         <User className="w-4 h-4 sm:w-5 sm:h-5" />
                       </Button>
                     </Link>
                     {/* Desktop: Full buttons */}
                     <div className="hidden lg:flex items-center gap-2">
-                      <Link href={user.email === 'admin@hoithoxanh.com' ? '/admin/dashboard' : '/account'}>
+                      <Link href={user.email === 'admin@refurbest.vn' ? '/admin/dashboard' : '/account'}>
                         <Button
                           variant="outline"
                           className="text-sm hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-400 transition-colors duration-300"
@@ -465,7 +462,7 @@ export default function Header() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="lg:hidden h-9 w-9 sm:h-10 sm:w-10 hover:bg-sky-50 hover:text-sky-600"
+                      className="lg:hidden h-9 w-9 sm:h-10 sm:w-10 hover:bg-green-50 hover:text-green-600"
                       onClick={() => {
                         setLoginMode('login');
                         setLoginModalOpen(true);
@@ -480,9 +477,9 @@ export default function Header() {
                         whileTap={{ scale: 0.95 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <Button 
-                          variant="outline" 
-                          className="text-sm bg-white hover:bg-sky-50 hover:text-sky-600 hover:border-sky-500 hover:shadow-md transition-all duration-300 border-gray-300"
+                        <Button
+                          variant="outline"
+                          className="text-sm bg-white hover:bg-green-50 hover:text-green-600 hover:border-green-500 hover:shadow-md transition-all duration-300 border-gray-300"
                           onClick={() => {
                             setLoginMode('login');
                             setLoginModalOpen(true);
@@ -497,9 +494,9 @@ export default function Header() {
                         whileTap={{ scale: 0.95 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <Button 
-                          variant="default" 
-                          className="text-sm bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 hover:shadow-lg text-white transition-all duration-300 font-medium"
+                        <Button
+                          variant="default"
+                          className="text-sm bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 hover:shadow-lg text-white transition-all duration-300 font-medium"
                           onClick={() => {
                             setLoginMode('signup');
                             setLoginModalOpen(true);
@@ -518,22 +515,22 @@ export default function Header() {
       </div>
 
       {/* Navigation - Mobile Optimized with Toggle */}
-      <div className={`bg-blue-50/80 backdrop-blur-sm transition-all duration-300 overflow-hidden ${
+      <div className={`bg-green-50/80 backdrop-blur-sm transition-all duration-300 overflow-hidden ${
         mobileMenuOpen ? 'max-h-96' : 'max-h-0 lg:max-h-96'
       }`}>
         <div className="container mx-auto px-2 sm:px-4">
           <nav className="flex items-center gap-1 py-1 overflow-x-auto scrollbar-hide">
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.2, ease: "easeOut" } }} 
+            <motion.div
+              whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.2, ease: "easeOut" } }}
               whileTap={{ scale: 0.95, transition: { duration: 0.15, ease: "easeIn" } }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <Link 
-                href="/home" 
+              <Link
+                href="/home"
                 className={`px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 whitespace-nowrap inline-block ${
                   isLinkActive('/home')
-                    ? 'text-sky-600 bg-white shadow-md font-bold'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-white'
+                    ? 'text-green-600 bg-white shadow-md font-bold'
+                    : 'text-gray-700 hover:text-green-600 hover:bg-white'
                 }`}
               >
                 Trang chủ
@@ -541,25 +538,12 @@ export default function Header() {
             </motion.div>
             <motion.div whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.2, ease: "easeOut" } }} whileTap={{ scale: 0.95, transition: { duration: 0.15, ease: "easeIn" } }}
             transition={{ duration: 0.3, ease: "easeInOut" }}>
-              <Link 
-                href="/gioi-thieu" 
-                className={`px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 whitespace-nowrap inline-block ${
-                  isLinkActive('/gioi-thieu')
-                    ? 'text-sky-600 bg-white shadow-md font-bold'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-white'
-                }`}
-              >
-                Giới thiệu
-              </Link>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.2, ease: "easeOut" } }} whileTap={{ scale: 0.95, transition: { duration: 0.15, ease: "easeIn" } }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}>
-              <Link 
-                href="#san-pham" 
+              <Link
+                href="#san-pham"
                 className={`px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 whitespace-nowrap inline-block ${
                   isLinkActive('#san-pham', 'san-pham')
-                    ? 'text-sky-600 bg-white shadow-md font-bold'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-white'
+                    ? 'text-green-600 bg-white shadow-md font-bold'
+                    : 'text-gray-700 hover:text-green-600 hover:bg-white'
                 }`}
                 onClick={(e) => {
                   e.preventDefault();
@@ -569,101 +553,102 @@ export default function Header() {
               Sản phẩm
             </Link>
             </motion.div>
-            
+
             <motion.div whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.2, ease: "easeOut" } }} whileTap={{ scale: 0.95, transition: { duration: 0.15, ease: "easeIn" } }}
             transition={{ duration: 0.3, ease: "easeInOut" }}>
-              <Link 
-                href="#thong-tin" 
-                className={`px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 whitespace-nowrap hidden sm:inline-block ${
-                  isLinkActive('#thong-tin', 'thong-tin')
-                    ? 'text-sky-600 bg-white shadow-md font-bold'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-white'
-                }`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleScrollToSection('thong-tin');
-                }}
-              >
-                Thông tin
-              </Link>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.2, ease: "easeOut" } }} whileTap={{ scale: 0.95, transition: { duration: 0.15, ease: "easeIn" } }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}>
-              <Link 
-                href="#hoi-dap" 
+              <Link
+                href="/gioi-thieu"
                 className={`px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 whitespace-nowrap inline-block ${
-                  isLinkActive('#hoi-dap', 'hoi-dap')
-                    ? 'text-sky-600 bg-white shadow-md font-bold'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-white'
+                  isLinkActive('/gioi-thieu')
+                    ? 'text-green-600 bg-white shadow-md font-bold'
+                    : 'text-gray-700 hover:text-green-600 hover:bg-white'
                 }`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleScrollToSection('hoi-dap');
-                }}
               >
-                Hỏi đáp
+                Giới thiệu
               </Link>
             </motion.div>
+
             <motion.div whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.2, ease: "easeOut" } }} whileTap={{ scale: 0.95, transition: { duration: 0.15, ease: "easeIn" } }}
             transition={{ duration: 0.3, ease: "easeInOut" }}>
-              <Link 
-                href="#thuong-hieu" 
-                className={`px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 whitespace-nowrap hidden md:inline-block ${
-                  isLinkActive('#thuong-hieu', 'thuong-hieu')
-                    ? 'text-sky-600 bg-white shadow-md font-bold'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-white'
-                }`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleScrollToSection('thuong-hieu');
-                }}
-              >
-                Thương hiệu
-              </Link>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.2, ease: "easeOut" } }} whileTap={{ scale: 0.95, transition: { duration: 0.15, ease: "easeIn" } }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}>
-              <Link 
-                href="#tu-van" 
+              <Link
+                href="/quy-trinh-tan-trang"
                 className={`px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 whitespace-nowrap inline-block ${
-                  isLinkActive('#tu-van', 'tu-van')
-                    ? 'text-sky-600 bg-white shadow-md font-bold'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-white'
+                  isLinkActive('/quy-trinh-tan-trang')
+                    ? 'text-green-600 bg-white shadow-md font-bold'
+                    : 'text-gray-700 hover:text-green-600 hover:bg-white'
                 }`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleScrollToSection('tu-van');
-                }}
               >
-                Tư vấn
+                Quy trình tân trang
+              </Link>
+            </motion.div>
+
+            <motion.div whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.2, ease: "easeOut" } }} whileTap={{ scale: 0.95, transition: { duration: 0.15, ease: "easeIn" } }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}>
+              <Link
+                href="/quy-trinh-kiem-dinh"
+                className={`px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 whitespace-nowrap inline-block ${
+                  isLinkActive('/quy-trinh-kiem-dinh')
+                    ? 'text-green-600 bg-white shadow-md font-bold'
+                    : 'text-gray-700 hover:text-green-600 hover:bg-white'
+                }`}
+              >
+                Quy trình kiểm định
+              </Link>
+            </motion.div>
+
+            <motion.div whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.2, ease: "easeOut" } }} whileTap={{ scale: 0.95, transition: { duration: 0.15, ease: "easeIn" } }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}>
+              <Link
+                href="/chinh-sach"
+                className={`px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 whitespace-nowrap inline-block ${
+                  isLinkActive('/chinh-sach')
+                    ? 'text-green-600 bg-white shadow-md font-bold'
+                    : 'text-gray-700 hover:text-green-600 hover:bg-white'
+                }`}
+              >
+                Chính sách
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.2, ease: "easeOut" } }} whileTap={{ scale: 0.95, transition: { duration: 0.15, ease: "easeIn" } }}
             transition={{ duration: 0.3, ease: "easeInOut" }}>
-              <Link 
-                href="/news" 
+              <Link
+                href="/faq"
+                className={`px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 whitespace-nowrap inline-block ${
+                  isLinkActive('/faq')
+                    ? 'text-green-600 bg-white shadow-md font-bold'
+                    : 'text-gray-700 hover:text-green-600 hover:bg-white'
+                }`}
+              >
+                FAQ
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.2, ease: "easeOut" } }} whileTap={{ scale: 0.95, transition: { duration: 0.15, ease: "easeIn" } }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}>
+              <Link
+                href="/news"
                 className={`px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 whitespace-nowrap inline-block ${
                   isLinkActive('/news')
-                    ? 'text-sky-600 bg-white shadow-md font-bold'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-white'
+                    ? 'text-green-600 bg-white shadow-md font-bold'
+                    : 'text-gray-700 hover:text-green-600 hover:bg-white'
                 }`}
               >
                 Tin tức
               </Link>
             </motion.div>
+
           </nav>
         </div>
         </div>
       </div>
-      
+
       {/* Cart Drawer */
       }
       <CartDrawer />
 
       {isClient && !user && (
-        <LoginModal 
-          isOpen={loginModalOpen} 
-          onClose={() => setLoginModalOpen(false)} 
+        <LoginModal
+          isOpen={loginModalOpen}
+          onClose={() => setLoginModalOpen(false)}
           showMessage={loginShowMessage}
           initialMode={loginMode}
         />

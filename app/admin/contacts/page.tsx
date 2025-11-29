@@ -153,7 +153,7 @@ export default function ContactsPage() {
                 onClick={() => setSelectedTab('unanswered')}
                 className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all ${
                   selectedTab === 'unanswered'
-                    ? 'bg-sky-500 text-white'
+                    ? 'bg-green-500 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -180,7 +180,7 @@ export default function ContactsPage() {
             <div className="p-4 space-y-3 max-h-[600px] overflow-y-auto">
               {loading ? (
                 <div className="text-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500 mx-auto"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto"></div>
                 </div>
               ) : (selectedTab === 'unanswered' ? unansweredQuestions : answeredQuestions).length === 0 ? (
                 <div className="text-center py-12">
@@ -194,7 +194,7 @@ export default function ContactsPage() {
                     onClick={() => setSelectedQuestion(q)}
                     className={`p-4 rounded-lg border cursor-pointer transition-all ${
                       selectedQuestion?.id === q.id
-                        ? 'border-sky-500 bg-sky-50'
+                        ? 'border-green-500 bg-green-50'
                         : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                   >
@@ -270,7 +270,7 @@ export default function ContactsPage() {
                 {selectedQuestion.answered_at ? (
                   <div className="mb-4">
                     <h4 className="font-semibold text-gray-900 mb-2">Câu trả lời:</h4>
-                    <div className="bg-sky-50 p-3 rounded-lg border-l-4 border-sky-500">
+                    <div className="bg-green-50 p-3 rounded-lg border-l-4 border-green-500">
                       <p className="text-sm text-gray-700 whitespace-pre-line">{selectedQuestion.answer_text}</p>
                       <p className="text-xs text-gray-500 mt-2">
                         {new Date(selectedQuestion.answered_at).toLocaleDateString('vi-VN')}
@@ -299,7 +299,7 @@ export default function ContactsPage() {
                         }}
                         placeholder="Nhập câu trả lời... (Ctrl+Enter để gửi)"
                         rows={8}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       />
                     </div>
                     <button
@@ -308,7 +308,7 @@ export default function ContactsPage() {
                         handleSubmitAnswer();
                       }}
                       disabled={!answerText.trim() || submitting}
-                      className="w-full bg-sky-500 hover:bg-sky-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-all"
+                      className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-all"
                     >
                       <Send className="w-4 h-4" />
                       {submitting ? 'Đang gửi...' : 'Gửi câu trả lời'}

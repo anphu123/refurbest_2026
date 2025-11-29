@@ -67,12 +67,12 @@ export default function CartPage() {
           className="flex-1 flex items-center justify-center p-4"
         >
           <div className="bg-white rounded-xl border border-gray-100 p-12 text-center max-w-md w-full shadow-sm">
-            <div className="w-20 h-20 bg-sky-50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <ShoppingBag className="w-10 h-10 text-sky-400" />
+            <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <ShoppingBag className="w-10 h-10 text-green-400" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Giỏ hàng trống</h2>
             <p className="text-gray-500 mb-8">Hãy thêm sản phẩm vào giỏ hàng để tiếp tục</p>
-            <Button asChild className="bg-sky-500 hover:bg-sky-600 px-8">
+            <Button asChild className="bg-green-500 hover:bg-green-600 text-white px-8">
               <Link href="/">Tiếp tục mua sắm</Link>
             </Button>
           </div>
@@ -138,7 +138,7 @@ export default function CartPage() {
                             className="object-cover"
                           />
                           {item.product.discount && (
-                            <div className="absolute -top-1 -right-1 bg-sky-500 text-white text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                            <div className="absolute -top-1 -right-1 bg-green-500 text-white text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
                               -{item.product.discount}%
                             </div>
                           )}
@@ -165,7 +165,7 @@ export default function CartPage() {
                           
                           {/* Price */}
                           <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                            <span className="font-bold text-sky-600 text-sm sm:text-base md:text-lg">
+                            <span className="font-bold text-green-600 text-sm sm:text-base md:text-lg">
                               {formatPrice(item.product.price)}
                             </span>
                             {item.product.originalPrice && item.product.originalPrice > item.product.price && (
@@ -195,7 +195,7 @@ export default function CartPage() {
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                                className="w-8 h-8 sm:w-9 sm:h-9 bg-sky-500 hover:bg-sky-600 rounded-lg flex items-center justify-center transition-colors text-white"
+                                className="w-8 h-8 sm:w-9 sm:h-9 bg-green-500 hover:bg-green-600 rounded-lg flex items-center justify-center transition-colors text-white"
                               >
                                 <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                               </motion.button>
@@ -203,7 +203,7 @@ export default function CartPage() {
 
                             <div className="text-right">
                               <p className="text-[10px] sm:text-xs text-gray-600">Thành tiền</p>
-                              <p className="font-bold text-sky-600 text-sm sm:text-base md:text-lg">
+                              <p className="font-bold text-green-600 text-sm sm:text-base md:text-lg">
                                 {formatPrice(item.product.price * item.quantity)}
                               </p>
                             </div>
@@ -274,7 +274,7 @@ export default function CartPage() {
                 <div className="border-t border-gray-200 pt-3 sm:pt-4 mb-4 sm:mb-6">
                   <div className="flex justify-between items-center">
                     <span className="text-base sm:text-lg font-bold text-gray-900">Tổng cộng:</span>
-                    <span className="text-xl sm:text-2xl font-bold text-sky-600">{formatPrice(finalTotal)}</span>
+                    <span className="text-xl sm:text-2xl font-bold text-green-600">{formatPrice(finalTotal)}</span>
                   </div>
                   <p className="text-[10px] sm:text-xs text-gray-500 mt-1">Đã bao gồm VAT (nếu có)</p>
                 </div>
@@ -287,12 +287,12 @@ export default function CartPage() {
                       value={promoCode}
                       onChange={(e) => setPromoCode(e.target.value)}
                       placeholder="Mã giảm giá"
-                      className="flex-1 px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                      className="flex-1 px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                     />
                     <Button
                       onClick={handleApplyPromo}
                       disabled={!promoCode}
-                      className="bg-sky-500 hover:bg-sky-600 text-xs sm:text-sm px-3 sm:px-4"
+                      className="bg-green-500 hover:bg-green-600 text-xs sm:text-sm px-3 sm:px-4"
                     >
                       Áp dụng
                     </Button>
@@ -316,7 +316,7 @@ export default function CartPage() {
                       }
                     }}
                     disabled={isNavigatingToCheckout}
-                    className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white h-11 sm:h-12 text-sm sm:text-base font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white h-11 sm:h-12 text-sm sm:text-base font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isNavigatingToCheckout ? (
                       <>

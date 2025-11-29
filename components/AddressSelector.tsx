@@ -94,7 +94,7 @@ export default function AddressSelector({
           value={city}
           onChange={handleCityChange}
           disabled={loadingProvinces}
-          className="w-full min-w-0 md:min-w-[180px] px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed cursor-pointer appearance-none bg-white relative z-0 overflow-hidden text-ellipsis whitespace-nowrap"
+          className="w-full min-w-0 md:min-w-[180px] px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed cursor-pointer appearance-none bg-white relative z-0 overflow-hidden text-ellipsis whitespace-nowrap"
         >
           <option value="">{loadingProvinces ? "Đang tải..." : "Chọn tỉnh/thành phố"}</option>
           {provinces.map((province) => (
@@ -118,7 +118,7 @@ export default function AddressSelector({
           value={district}
           onChange={handleDistrictChange}
           disabled={loading || !city || districts.length === 0}
-          className="w-full min-w-0 md:min-w-[180px] px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed cursor-pointer appearance-none bg-white relative z-0 overflow-hidden text-ellipsis whitespace-nowrap"
+          className="w-full min-w-0 md:min-w-[180px] px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed cursor-pointer appearance-none bg-white relative z-0 overflow-hidden text-ellipsis whitespace-nowrap"
         >
           <option value="">Chọn quận/huyện</option>
           {districts.map((dist) => (
@@ -139,7 +139,7 @@ export default function AddressSelector({
           value={ward}
           onChange={handleWardChange}
           disabled={loading || !district || wards.length === 0}
-          className="w-full min-w-0 md:min-w-[180px] px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed cursor-pointer appearance-none bg-white relative z-0 overflow-hidden text-ellipsis whitespace-nowrap"
+          className="w-full min-w-0 md:min-w-[180px] px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed cursor-pointer appearance-none bg-white relative z-0 overflow-hidden text-ellipsis whitespace-nowrap"
         >
           <option value="">Chọn phường/xã</option>
           {wards.map((w) => (

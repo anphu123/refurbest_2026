@@ -32,10 +32,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // Generate short numeric order code: HTX<5 digits> (e.g. HTX91845)
-    // Random 5-digit number to reduce collision in practice
-    const fiveDigits = (Math.floor(Math.random() * 90000) + 10000).toString();
-    const orderNumber = `HTX${fiveDigits}`;
+    // Generate short numeric order code: RF<6 digits> (e.g. RF123456)
+    // RF = Refurbish, Random 6-digit number to reduce collision
+    const sixDigits = (Math.floor(Math.random() * 900000) + 100000).toString();
+    const orderNumber = `RF${sixDigits}`;
 
     // Create order
     const { data: order, error: orderError } = await supabase
@@ -72,13 +72,35 @@ export async function POST(request: Request) {
 
     // Create order items
     if (items && items.length > 0) {
-      const orderItems = items.map((item: any) => ({
-        order_id: order.id,
-        product_id: item.product.id,
-        quantity: item.quantity,
-        price: item.product.price,
-        subtotal: item.product.price * item.quantity,
-      }));
+      console.log('Raw items received:', JSON.stringify(items, null, 2));
+      
+      const orderItems = items.map((item: any) => {
+        const price = item.product?.price || item.price || 0;
+        // Get the actual product_id from variants array if available
+        const productId = item.product?.variants?.[0]?.product_id || item.product?.product_id || item.product_id;
+        
+        console.log('Processing item:', {
+          productId,
+          price,
+          quantity: item.quantity,
+          hasVariants: !!item.product?.variants,
+          rawItem: item
+        });
+        
+        if (!productId) {
+          throw new Error('Product ID is missing from item');
+        }
+        
+        return {
+          order_id: order.id,
+          product_id: productId,
+          quantity: item.quantity,
+          price: price,
+          subtotal: price * item.quantity,
+        };
+      });
+
+      console.log('Order items to insert:', JSON.stringify(orderItems, null, 2));
 
       const { error: itemsError } = await supabase
         .from('order_items')
@@ -86,6 +108,7 @@ export async function POST(request: Request) {
 
       if (itemsError) {
         console.error('Error creating order items:', itemsError);
+        console.error('Order items data:', orderItems);
         // Rollback order if items fail
         await supabase.from('orders').delete().eq('id', order.id);
         return NextResponse.json(

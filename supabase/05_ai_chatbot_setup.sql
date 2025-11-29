@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS ai_settings (
   schedule_start TIME DEFAULT '08:00:00',
   schedule_end TIME DEFAULT '22:00:00',
   timezone TEXT DEFAULT 'Asia/Ho_Chi_Minh',
-  default_prompt TEXT DEFAULT 'Bạn là nhân viên tư vấn bán hàng của công ty máy lọc không khí. Hãy trả lời một cách thân thiện, chuyên nghiệp và hỗ trợ khách hàng.',
+  default_prompt TEXT DEFAULT 'Bạn là nhân viên tư vấn bán hàng của cửa hàng điện thoại. Hãy trả lời một cách thân thiện, chuyên nghiệp và hỗ trợ khách hàng.',
   agent_name TEXT DEFAULT 'Chị Lan',
   agent_avatar TEXT,
   agent_title TEXT DEFAULT 'Tư vấn viên',

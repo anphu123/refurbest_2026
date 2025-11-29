@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Botchat from "@/components/Botchat";
 import { createClient } from "@/lib/supabase/client";
 import { Clock, ArrowRight } from "lucide-react";
 import Image from "next/image";
@@ -18,7 +19,6 @@ interface NewsItem {
   published_at?: string;
   created_at?: string;
   author_name?: string;
-  views: number;
 }
 
 export default function NewsPage() {
@@ -35,23 +35,20 @@ export default function NewsPage() {
       const supabase = createClient();
       const { data, error } = await supabase
         .from('news')
-        .select('id, title, slug, excerpt, image, published_at, created_at, author_name, views')
+        .select('id, title, slug, excerpt, image, published_at, created_at, author_name')
         .eq('status', 'published')
         .order('published_at', { ascending: false });
-      
+
       if (error) {
-        if (error.code === 'PGRST205' || error.message?.includes('Could not find the table')) {
-          setNews([]);
-        } else {
-          console.error('Error loading news:', error);
-          setNews([]);
-        }
+        console.error('Error loading news:', error);
+        setNews([]);
       } else if (data) {
         setNews(data as NewsItem[]);
       } else {
         setNews([]);
       }
     } catch (e) {
+      console.error('Exception loading news:', e);
       setNews([]);
     } finally {
       setLoading(false);
@@ -83,7 +80,7 @@ export default function NewsPage() {
               Tin tức sản phẩm
             </h1>
             <p className="text-gray-600">
-              Cập nhật tin tức mới nhất về máy lọc không khí
+              Cập nhật tin tức mới nhất về điện thoại
             </p>
           </div>
 
@@ -129,7 +126,7 @@ export default function NewsPage() {
                       </div>
                     )}
                     <div className="p-6">
-                      <h3 className="font-semibold text-gray-900 line-clamp-2 mb-3 group-hover:text-sky-600 transition-colors">
+                      <h3 className="font-semibold text-gray-900 line-clamp-2 mb-3 group-hover:text-green-600 transition-colors">
                         {item.title}
                       </h3>
                       {item.excerpt && (
@@ -144,7 +141,7 @@ export default function NewsPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                          <span className="group-hover:text-sky-600 transition-colors">Đọc thêm</span>
+                          <span className="group-hover:text-green-600 transition-colors">Đọc thêm</span>
                         </div>
                       </div>
                     </div>
@@ -157,6 +154,7 @@ export default function NewsPage() {
       </main>
 
       <Footer />
+      <Botchat />
     </div>
   );
 }

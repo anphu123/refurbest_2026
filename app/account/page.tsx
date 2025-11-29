@@ -33,7 +33,7 @@ export default function AccountPage() {
       router.push("/");
       return;
     }
-    if (user && user.email === 'admin@hoithoxanh.com') {
+    if (user && user.email === 'admin@refurbest.vn') {
       router.push('/admin/dashboard');
       return;
     }
@@ -151,7 +151,7 @@ export default function AccountPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Nhập họ và tên"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
                 />
               </div>
 
@@ -165,7 +165,7 @@ export default function AccountPage() {
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   placeholder="Nhập số điện thoại"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
                 />
               </div>
 
@@ -188,7 +188,7 @@ export default function AccountPage() {
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   placeholder="Số nhà, tên đường..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
                 />
               </div>
 
@@ -196,7 +196,7 @@ export default function AccountPage() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all"
+                  className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-all"
                 >
                   {loading ? (
                     "Đang lưu..."

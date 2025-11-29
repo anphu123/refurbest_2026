@@ -2,8 +2,13 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Hơi Thở Xanh - Máy lọc không khí chính hãng, Giá tốt",
-  description: "Hơi Thở Xanh - Chuyên máy lọc không khí chính hãng, công nghệ HEPA, Ion, Carbon tiên tiến. Lọc 99.97% bụi mịn, vi khuẩn, virus. Bảo vệ sức khỏe gia đình bạn.",
+  title: "Refurbest - Thiết bị Refurbish chính hãng, Giá tốt nhất",
+  description: "Refurbest - Chuyên cung cấp thiết bị Refurbish chính hãng, công nghệ tiên tiến. iPhone, Samsung, Xiaomi, Oppo với giá tốt nhất. Bảo hành chính hãng, giao hàng toàn quốc.",
+  icons: {
+    icon: "/Refurbest.png",
+    shortcut: "/Refurbest.png",
+    apple: "/Refurbest.png",
+  },
 };
 
 export default function RootLayout({

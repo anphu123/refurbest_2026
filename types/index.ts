@@ -1,24 +1,38 @@
 import { LucideIcon } from "lucide-react";
 
+export interface ProductVariant {
+  id: string;
+  product_id: string;
+  price: number;
+  original_price?: number;
+  stock: number;
+  attributes: Record<string, string>; // e.g., {"color": "Black", "storage": "128GB"}
+  images?: string[]; // Array of image URLs for this variant
+  battery_health?: number; // Battery health percentage (0-100)
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Product {
   id: string;
   name: string;
   description?: string;
-  price: number;
-  original_price?: number;
-  originalPrice?: number;
-  discount?: number;
   image: string;
   images?: string[];
   category: string;
   brand: string;
+  // Derived fields for convenience in UI (min across variants)
+  price?: number;
+  originalPrice?: number;
+  stock?: number;
   rating?: number;
   reviews?: number;
-  badge?: 'hot' | 'new' | 'sale';
-  stock: number;
+    badge?: 'hot' | 'new' | 'sale' | 'bestseller';
   status?: 'active' | 'inactive';
   created_at?: string;
   updated_at?: string;
+  specifications?: Record<string, any>;
+  variants: ProductVariant[];
 }
 
 export interface Category {

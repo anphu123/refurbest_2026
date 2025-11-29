@@ -1,5 +1,5 @@
 {
-  "name": "hoithoxanh",
+  "name": "dien-thoai-vui",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@radix-ui/react-slot": "^1.2.4",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.47.10",
     "chart.js": "^4.5.1",

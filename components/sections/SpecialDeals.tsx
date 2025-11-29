@@ -20,7 +20,7 @@ export default function SpecialDeals() {
       title: "Deal Giờ Vàng",
       description: "Mua 1 tặng 1 phụ kiện khi mua nồi chiên không dầu",
       icon: Clock,
-      color: "from-blue-500 to-cyan-600",
+      color: "from-green-500 to-cyan-600",
       badge: "Mỗi ngày 10h",
       image: "https://mekoong.com/wp-content/uploads/2022/02/cong-ty-san-xuat-do-gia-dung-3.png",
     },

@@ -26,7 +26,7 @@ async function isAdmin() {
     if (!user) return false;
     
     // Check if user is admin
-    return user.email === 'admin@hoithoxanh.com' || user.user_metadata?.role === 'admin';
+    return user.email === 'admin@refurbest.vn' || user.user_metadata?.role === 'admin';
   } catch {
     return false;
   }
@@ -79,7 +79,7 @@ export async function GET() {
       phone: user.user_metadata?.phone || user.phone || null,
       created_at: user.created_at,
       last_sign_in_at: user.last_sign_in_at,
-      role: user.user_metadata?.role || (user.email === 'admin@hoithoxanh.com' ? 'admin' : 'user'),
+      role: user.user_metadata?.role || (user.email === 'admin@refurbest.vn' ? 'admin' : 'user'),
       name: user.user_metadata?.full_name || user.user_metadata?.name,
     }));
 
@@ -288,7 +288,7 @@ export async function DELETE(request: Request) {
 
     // Prevent deleting admin account
     const { data: user } = await supabase.auth.admin.getUserById(id);
-    if (user?.user?.email === 'admin@hoithoxanh.com') {
+    if (user?.user?.email === 'admin@refurbest.vn') {
       return NextResponse.json(
         { error: 'Cannot delete admin account' },
         { status: 400 }

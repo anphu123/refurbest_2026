@@ -2,17 +2,20 @@
 
 import { useState, useEffect } from "react";
 import ProductCard from "@/components/ProductCard";
-import { Star, TrendingUp, TrendingDown, Grid3x3, List, ChevronRight, Filter } from "lucide-react";
+import { Grid3x3, List, ChevronRight, Filter, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import * as LucideIcons from "lucide-react";
 
 export default function CategoryTabs() {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedBrand, setSelectedBrand] = useState<string>("");
+  const [selectedBatteryRange, setSelectedBatteryRange] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("popular");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [availableFilters, setAvailableFilters] = useState<Record<string, string[]>>({});
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [displayLimit, setDisplayLimit] = useState(20);
@@ -31,11 +34,12 @@ export default function CategoryTabs() {
         
         if (!categoriesError && categoriesData && categoriesData.length > 0) {
           const mappedCategories = categoriesData.map(cat => {
-            const IconName = cat.icon || 'Wind';
-            const IconComponent = (LucideIcons as any)[IconName] || LucideIcons.Wind;
+            const IconName = cat.icon || 'Smartphone';
+            const IconComponent = (LucideIcons as any)[IconName] || LucideIcons.Smartphone;
             return {
               ...cat,
-              Icon: IconComponent
+              Icon: IconComponent,
+              image: cat.image || null,
             };
           });
           setCategories(mappedCategories);
@@ -43,15 +47,47 @@ export default function CategoryTabs() {
           setCategories([]);
         }
         
-        // Load products from backend
+        // Load products from backend with variants
         const { data: productsData, error: productsError } = await supabase
           .from('products')
-          .select('*')
-          .eq('status', 'active')
-          .order('created_at', { ascending: false });
+          .select('*, specifications, variants:product_variants(*)')
+          .eq('status', 'active');
         
         if (!productsError && productsData && productsData.length > 0) {
-          setProducts(productsData as any);
+          // Derive price/originalPrice/stock from variants for UI usage
+          const mappedProducts = (productsData as any[]).map((p) => {
+            const variants = Array.isArray(p.variants) ? p.variants : [];
+            const prices = variants.map((v: any) => Number(v.price || 0)).filter((n: number) => Number.isFinite(n));
+            const originalPrices = variants.map((v: any) => Number(v.original_price ?? v.price ?? 0)).filter((n: number) => Number.isFinite(n));
+            const minPrice = prices.length > 0 ? Math.min(...prices) : Number(p.price || 0);
+            const minOriginal = originalPrices.length > 0 ? Math.min(...originalPrices) : Number(p.originalPrice ?? p.original_price ?? p.price ?? 0);
+            const totalStock = variants.reduce((sum: number, v: any) => sum + Number(v.stock || 0), Number(p.stock || 0));
+            return { ...p, price: minPrice, originalPrice: minOriginal, stock: totalStock };
+          });
+
+          setProducts(mappedProducts as any);
+
+          // Extract available filters from all variants
+          const allOptions: Record<string, Set<string>> = {};
+          (productsData as any[]).forEach(product => {
+            if (product.variants) {
+              (product.variants as any[]).forEach(variant => {
+                Object.entries(variant.attributes).forEach(([key, value]) => {
+                  if (!allOptions[key]) {
+                    allOptions[key] = new Set();
+                  }
+                  allOptions[key].add(value as string);
+                });
+              });
+            }
+          });
+
+          const finalFilters: Record<string, string[]> = {};
+          for (const key in allOptions) {
+            finalFilters[key] = Array.from(allOptions[key]).sort();
+          }
+          setAvailableFilters(finalFilters);
+
         } else {
           setProducts([]);
         }
@@ -95,13 +131,56 @@ export default function CategoryTabs() {
     };
   }, []);
 
-  // Filter products by selected category and brand
+  const handleFilterChange = (filterKey: string, value: string) => {
+    setSelectedFilters(prev => ({
+      ...prev,
+      [filterKey]: value,
+    }));
+    setDisplayLimit(20); // Reset limit on filter change
+  };
+
+  // Filter products
   let filteredProducts = products;
+  // 1. Filter by Brand and Category
   if (selectedBrand) {
     filteredProducts = products.filter(p => p.brand === selectedBrand);
   }
   if (selectedCategory) {
     filteredProducts = filteredProducts.filter(p => p.category === selectedCategory);
+  }
+
+  // 2. Filter by dynamic attributes (color, storage, etc.)
+  const activeAttributeFilters = Object.entries(selectedFilters).filter(([, value]) => value);
+  if (activeAttributeFilters.length > 0) {
+    filteredProducts = filteredProducts.filter(p => {
+      if (!p.variants || p.variants.length === 0) return false;
+      // A product is a match if AT LEAST ONE of its variants matches ALL active filters
+      return p.variants.some((variant: any) =>
+        activeAttributeFilters.every(([key, value]) => variant.attributes[key] === value)
+      );
+    });
+  }
+
+  // 3. Filter by battery health
+  if (selectedBatteryRange) {
+    filteredProducts = filteredProducts.filter(p => {
+      if (!p.variants || p.variants.length === 0) return false;
+      return p.variants.some((variant: any) => {
+        const battery = variant.battery_health;
+        if (!battery) return false;
+        
+        switch (selectedBatteryRange) {
+          case "90-100":
+            return battery >= 90 && battery <= 100;
+          case "80-89":
+            return battery >= 80 && battery < 90;
+          case "70-79":
+            return battery >= 70 && battery < 80;
+          default:
+            return true;
+        }
+      });
+    });
   }
 
   // Sort products
@@ -130,20 +209,20 @@ export default function CategoryTabs() {
             Danh mục sản phẩm
           </h2>
           <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
-            Khám phá các loại máy lọc không khí phù hợp với nhu cầu của bạn
+            Khám phá các dòng điện thoại phù hợp với nhu cầu của bạn
           </p>
         </div>
 
-        {/* Categories Grid - Clean and Modern */}
+        {/* Categories Grid - Modern Card Design */}
         <div className="mb-8 md:mb-12">
           {loading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-gray-100 rounded-xl h-32 animate-pulse" />
+                <div key={i} className="bg-gray-100 rounded-2xl h-32 animate-pulse" />
               ))}
             </div>
           ) : categories.length > 0 ? (
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2 sm:gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5">
               {/* All Products Button */}
               <button
                 onClick={() => {
@@ -151,31 +230,27 @@ export default function CategoryTabs() {
                   setSelectedBrand("");
                   setDisplayLimit(20);
                 }}
-                className={`group relative p-2.5 sm:p-3 rounded-lg border transition-all duration-200 hover:shadow-md ${
+                className={`group relative rounded-2xl border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden aspect-[4/3] sm:aspect-[3/2] ${
                   selectedCategory === ""
-                    ? "border-sky-500 bg-sky-50 shadow-sm"
-                    : "border-gray-200 bg-white hover:border-sky-300"
+                    ? "border-green-500 shadow-lg"
+                    : "border-gray-200 hover:border-green-300"
                 }`}
               >
-                <div className={`w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-2 rounded-full flex items-center justify-center transition-all ${
-                  selectedCategory === ""
-                    ? "bg-sky-500 text-white"
-                    : "bg-gray-100 text-gray-600 group-hover:bg-sky-100 group-hover:text-sky-600"
-                }`}>
-                  <Grid3x3 className="w-4 h-4 sm:w-5 sm:h-5" />
+                {/* Background gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-green-600 to-green-700" />
+                {/* Overlay */}
+                <div className={`absolute inset-0 ${selectedCategory === "" ? 'bg-black/30' : 'bg-black/20 group-hover:bg-black/30'} transition-colors`} />
+                {/* Icon and label */}
+                <div className="relative z-10 flex flex-col items-center justify-center h-full text-white">
+                  <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center mb-2">
+                    <Grid3x3 className="w-6 h-6" />
+                  </div>
+                  <span className="font-bold text-sm">Tất cả</span>
                 </div>
-                <span className={`block text-[10px] sm:text-xs font-medium text-center transition-colors ${
-                  selectedCategory === ""
-                    ? "text-sky-600"
-                    : "text-gray-700 group-hover:text-sky-600"
-                }`}>
-                  Tất cả
-                </span>
               </button>
 
               {/* Category Buttons */}
               {categories.map((cat, index) => {
-                const IconComponent = cat.Icon || LucideIcons.Wind;
                 const isActive = selectedCategory === cat.id;
                 return (
                   <button
@@ -184,24 +259,20 @@ export default function CategoryTabs() {
                       setSelectedCategory(isActive ? "" : cat.id);
                       setDisplayLimit(20);
                     }}
-                    className={`group relative p-2.5 sm:p-3 rounded-lg border transition-all duration-200 hover:shadow-md ${
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                    className={`group relative rounded-2xl border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden animate-fade-in-up aspect-[4/3] sm:aspect-[3/2] flex items-center justify-center text-center ${
                       isActive
-                        ? "border-sky-500 bg-sky-50 shadow-sm"
-                        : "border-gray-200 bg-white hover:border-sky-300"
+                        ? "border-green-500 shadow-lg"
+                        : "border-gray-200 hover:border-green-300"
                     }`}
                   >
-                    <div className={`w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-2 rounded-full flex items-center justify-center transition-all ${
-                      isActive
-                        ? "bg-sky-500 text-white"
-                        : "bg-gray-100 text-gray-600 group-hover:bg-sky-100 group-hover:text-sky-600"
-                    }`}>
-                      <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </div>
-                    <span className={`block text-[10px] sm:text-xs font-medium text-center transition-colors line-clamp-2 leading-tight ${
-                      isActive
-                        ? "text-sky-600"
-                        : "text-gray-700 group-hover:text-sky-600"
-                    }`}>
+                    {/* Fallback gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-green-600 to-green-700" />
+                    {cat.image && (
+                      <img src={cat.image} alt={cat.name} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 opacity-90" />
+                    )}
+                    <div className={`absolute inset-0 transition-colors duration-300 ${isActive ? 'bg-black/35' : 'bg-black/15 group-hover:bg-black/30'}`}></div>
+                    <span className="relative z-10 text-sm font-bold text-white line-clamp-2 leading-tight px-2">
                       {cat.name}
                     </span>
                   </button>
@@ -227,52 +298,73 @@ export default function CategoryTabs() {
                 : `Tất cả ${filteredProducts.length} sản phẩm`
               }
             </span>
-            {selectedBrand && (
-              <button
-                onClick={() => setSelectedBrand("")}
-                className="ml-2 px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded text-gray-600 hover:text-gray-800 transition-colors"
-              >
-                ✕
-              </button>
-            )}
+            {/* Active Filters Pills */}
+            <div className="flex flex-wrap gap-2 mt-1">
+              {selectedBrand && (
+                <button onClick={() => setSelectedBrand("")} className="flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full hover:bg-red-200">
+                  <span>{selectedBrand}</span> <X size={12} />
+                </button>
+              )}
+              {selectedBatteryRange && (
+                <button onClick={() => setSelectedBatteryRange("")} className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200">
+                  <span>Pin: {selectedBatteryRange}%</span> <X size={12} />
+                </button>
+              )}
+              {Object.entries(selectedFilters).map(([key, value]) => value && (
+                <button key={key} onClick={() => handleFilterChange(key, "")} className="flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full hover:bg-green-200">
+                  <span>{key}: {value}</span> <X size={12} />
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Sort Options */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs md:text-sm text-gray-600 hidden sm:inline">Sắp xếp:</span>
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Battery Health Filter */}
+            <select
+              value={selectedBatteryRange}
+              onChange={(e) => {
+                setSelectedBatteryRange(e.target.value);
+                setDisplayLimit(20);
+              }}
+              className="px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all cursor-pointer"
+            >
+              <option value="">Tất cả Pin</option>
+              <option value="90-100">Pin 90-100%</option>
+              <option value="80-89">Pin 80-89%</option>
+              <option value="70-79">Pin 70-79%</option>
+            </select>
+
+            {/* Dynamic Attribute Filters */}
+            {Object.entries(availableFilters).map(([key, values]) => (
               <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all cursor-pointer"
+                key={key}
+                value={selectedFilters[key] || ""}
+                onChange={(e) => handleFilterChange(key, e.target.value)}
+                className="px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all cursor-pointer"
               >
-                <option value="popular">Phổ biến</option>
-                <option value="price-asc">Giá: Thấp → Cao</option>
-                <option value="price-desc">Giá: Cao → Thấp</option>
-                <option value="hot">Khuyến mãi HOT</option>
+                <option value="">Tất cả {key}</option>
+                {values.map(v => <option key={v} value={v}>{v}</option>)}
               </select>
-            </div>
+            ))}
+
+            {/* Sort Options */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all cursor-pointer"
+            >
+              <option value="popular">Phổ biến</option>
+              <option value="price-asc">Giá: Thấp → Cao</option>
+              <option value="price-desc">Giá: Cao → Thấp</option>
+              <option value="hot">Khuyến mãi HOT</option>
+            </select>
 
             {/* View Mode Toggle */}
             <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-md transition-all ${
-                  viewMode === "grid"
-                    ? "bg-white text-sky-600 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
+              <button onClick={() => setViewMode("grid")} className={`p-2 rounded-md transition-all ${viewMode === "grid" ? "bg-white text-green-600 shadow-sm" : "text-gray-600 hover:text-gray-900"}`}>
                 <Grid3x3 className="w-4 h-4" />
               </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`p-2 rounded-md transition-all ${
-                  viewMode === "list"
-                    ? "bg-white text-sky-600 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
+              <button onClick={() => setViewMode("list")} className={`p-2 rounded-md transition-all ${viewMode === "list" ? "bg-white text-green-600 shadow-sm" : "text-gray-600 hover:text-gray-900"}`}>
                 <List className="w-4 h-4" />
               </button>
             </div>
@@ -304,7 +396,7 @@ export default function CategoryTabs() {
             {selectedCategory && (
               <button
                 onClick={() => setSelectedCategory("")}
-                className="mt-4 px-6 py-2 bg-sky-500 text-white rounded-lg font-medium hover:bg-sky-600 transition-colors"
+                className="mt-4 px-6 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
               >
                 Xem tất cả sản phẩm
               </button>
@@ -339,7 +431,7 @@ export default function CategoryTabs() {
                     }, 500);
                   }}
                   disabled={loadingMore}
-                  className="px-8 py-3 bg-sky-500 text-white rounded-xl font-semibold hover:bg-sky-600 transition-all shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="px-8 py-3 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 transition-all shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {loadingMore ? (
                     <>

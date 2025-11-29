@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, MapPin, Phone, Mail, CreditCard, Truck, Shield, CheckCircle, Lock, Sparkles, Gift, AlertCircle } from "lucide-react";
+import { ArrowLeft, MapPin, CreditCard, Shield, CheckCircle, Sparkles, Gift, AlertCircle, Truck } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/stores/cart";
@@ -16,19 +16,15 @@ import Botchat from "@/components/Botchat";
 import LoginModal from "@/components/LoginModal";
 import AddressSelector from "@/components/AddressSelector";
 import { useProvinces } from "@/lib/hooks/useProvinces";
-import PaymentProcessing from "@/components/PaymentProcessing";
-import SepayQRPayment from "@/components/SepayQRPayment";
 
 export default function CheckoutPage() {
-  const { items, buyNowItems, getTotalItems, getTotalPrice, getTotalSavings, clearBuyNowItems } = useCartStore();
+  const { items, buyNowItems, clearBuyNowItems } = useCartStore();
   const { user } = useAuthStore();
   const router = useRouter();
   const { provinces, districts, wards, fetchDistricts, fetchWards } = useProvinces();
   const [currentStep, setCurrentStep] = useState(1);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [showSepayQR, setShowSepayQR] = useState(false);
-  const [sepayQRData, setSepayQRData] = useState<any>(null);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -61,14 +57,12 @@ export default function CheckoutPage() {
   const checkoutItems = buyNowItems.length > 0 ? buyNowItems : items;
   
   // Tính toán dựa trên checkoutItems
-  const totalItems = checkoutItems.reduce((total, item) => total + item.quantity, 0);
-  const totalPrice = checkoutItems.reduce((total, item) => total + (item.product.price * item.quantity), 0);
-  const totalSavings = checkoutItems.reduce((total, item) => {
-    if (item.product.originalPrice) {
-      return total + ((item.product.originalPrice - item.product.price) * item.quantity);
-    }
-    return total;
-  }, 0);
+  const totalPrice = checkoutItems.reduce((total, item) => total + ((item.product.price || 0) * item.quantity), 0);
+
+  // Tính phí vận chuyển
+  const FREE_SHIPPING_THRESHOLD = 2000000; // 2 triệu
+  const shippingFee = totalPrice >= FREE_SHIPPING_THRESHOLD ? 0 : 30000;
+  const amountNeededForFreeShipping = FREE_SHIPPING_THRESHOLD - totalPrice;
 
   // Scroll to top when page loads - scroll immediately first, then smooth
   useEffect(() => {
@@ -185,7 +179,6 @@ export default function CheckoutPage() {
 
     try {
       // Save order to database first
-      const shippingFee = 0; // You can calculate this based on location
       const discountAmount = 0; // You can calculate this based on coupons
       const finalAmount = totalPrice + shippingFee - discountAmount;
 
@@ -218,41 +211,6 @@ export default function CheckoutPage() {
         return;
       }
 
-            // Handle payment method
-    if (formData.paymentMethod === 'sepay') {
-      try {
-                const orderCode = orderData.order.order_number;
-                const res = await fetch(`/api/payment/sepay/create`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ 
-                    amount: finalAmount, 
-                    orderCode, 
-                    description: `Thanh toan don hang ${orderCode}`,
-                    orderId: orderData.order.id,
-                  }),
-        });
-        const data = await res.json();
-                
-                if (data?.success && data?.qrData) {
-                  // Hiển thị QR code modal ngay lập tức
-                  setSepayQRData(data.qrData);
-                  setShowSepayQR(true);
-                  // Không reset loading vì popup sẽ hiện
-          return;
-        }
-                
-                alert('Không thể tạo thanh toán. Vui lòng thử lại hoặc chọn phương thức khác.');
-                setIsProcessingPayment(false);
-        return;
-      } catch (err) {
-                console.error('Sepay error:', err);
-                alert('Có lỗi xảy ra khi tạo thanh toán. Vui lòng thử lại.');
-                setIsProcessingPayment(false);
-        return;
-      }
-    }
-
             // For COD, clear cart and redirect to success page
             if (buyNowItems.length > 0) {
               clearBuyNowItems();
@@ -268,7 +226,7 @@ export default function CheckoutPage() {
 
   if (checkoutItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-50 flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -283,7 +241,7 @@ export default function CheckoutPage() {
           </motion.div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Giỏ hàng trống</h2>
           <p className="text-gray-600 mb-6">Bạn cần thêm sản phẩm vào giỏ hàng trước khi thanh toán</p>
-          <Button asChild className="bg-sky-500 hover:bg-sky-600">
+          <Button asChild className="bg-green-500 hover:bg-green-600 text-white">
             <Link href="/">Tiếp tục mua sắm</Link>
           </Button>
         </motion.div>
@@ -292,7 +250,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-50 flex flex-col">
       <Header />
       
       <main className="flex-1">
@@ -351,7 +309,7 @@ export default function CheckoutPage() {
                       transition={{ delay: index * 0.1 }}
                       className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full border-2 transition-all shrink-0 relative ${
                         currentStep >= step.id
-                          ? "bg-sky-500 border-sky-500"
+                          ? "bg-green-500 border-green-500"
                           : "bg-white border-gray-300"
                       }`}
                     >
@@ -367,7 +325,7 @@ export default function CheckoutPage() {
                     
                     <div className="ml-2 sm:ml-3 min-w-0 hidden sm:block">
                       <h3 className={`font-semibold text-xs sm:text-sm md:text-base ${
-                        currentStep >= step.id ? "text-sky-600" : "text-gray-400"
+                        currentStep >= step.id ? "text-green-600" : "text-gray-400"
                       }`}>
                         {step.title}
                       </h3>
@@ -376,7 +334,7 @@ export default function CheckoutPage() {
                     
                     {index < steps.length - 1 && (
                       <div className={`w-6 sm:w-12 md:w-20 h-0.5 mx-2 sm:mx-4 ${
-                        currentStep > step.id ? "bg-sky-500" : "bg-gray-300"
+                        currentStep > step.id ? "bg-green-500" : "bg-gray-300"
                       }`} />
                     )}
                   </div>
@@ -402,8 +360,8 @@ export default function CheckoutPage() {
                     className="space-y-6"
                   >
                     <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-sky-100 rounded-full flex items-center justify-center">
-                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-sky-600" />
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                       </div>
                       <div>
                         <h2 className="text-lg sm:text-xl font-bold text-gray-900">Thông tin giao hàng</h2>
@@ -421,7 +379,7 @@ export default function CheckoutPage() {
                           name="fullName"
                           value={formData.fullName}
                           onChange={handleInputChange}
-                          className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors text-sm sm:text-base ${
+                          className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors text-sm sm:text-base ${
                             formData.fullName.trim() ? "border-green-300 bg-green-50" : "border-gray-300"
                           }`}
                           placeholder="Nhập họ và tên"
@@ -441,7 +399,7 @@ export default function CheckoutPage() {
                           name="phone"
                           value={formData.phone}
                           onChange={handleInputChange}
-                          className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors text-sm sm:text-base ${
+                          className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors text-sm sm:text-base ${
                             formData.phone.trim() ? "border-green-300 bg-green-50" : "border-gray-300"
                           }`}
                           placeholder="Nhập số điện thoại"
@@ -461,7 +419,7 @@ export default function CheckoutPage() {
                           name="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
                           placeholder="Nhập email"
                         />
                       </div>
@@ -502,7 +460,7 @@ export default function CheckoutPage() {
                         name="address"
                         value={formData.address}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors ${
+                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors ${
                           formData.address.trim() ? "border-green-300 bg-green-50" : "border-gray-300"
                         }`}
                         placeholder="Số nhà, tên đường..."
@@ -522,7 +480,7 @@ export default function CheckoutPage() {
                         value={formData.note}
                         onChange={handleInputChange}
                         rows={3}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors resize-none"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors resize-none"
                         placeholder="Ghi chú cho đơn hàng..."
                       />
                     </div>
@@ -537,8 +495,8 @@ export default function CheckoutPage() {
                     className="space-y-6"
                   >
                     <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center">
-                        <CreditCard className="w-5 h-5 text-sky-600" />
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <CreditCard className="w-5 h-5 text-green-600" />
                       </div>
                       <div>
                         <h2 className="text-xl font-bold text-gray-900">Phương thức thanh toán</h2>
@@ -561,8 +519,8 @@ export default function CheckoutPage() {
                     className="space-y-6"
                   >
                     <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center">
-                        <Shield className="w-5 h-5 text-sky-600" />
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <Shield className="w-5 h-5 text-green-600" />
                       </div>
                       <div>
                         <h2 className="text-xl font-bold text-gray-900">Xác nhận đơn hàng</h2>
@@ -583,8 +541,8 @@ export default function CheckoutPage() {
                     <div className="bg-gray-50 rounded-xl p-6 space-y-4">
                       <h3 className="font-semibold text-gray-900">Phương thức thanh toán</h3>
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-sky-100 rounded-full flex items-center justify-center">
-                          <CreditCard className="w-4 h-4 text-sky-600" />
+                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                          <CreditCard className="w-4 h-4 text-green-600" />
                         </div>
                         <span className="font-medium">
                           {formData.paymentMethod === "cod" 
@@ -618,8 +576,8 @@ export default function CheckoutPage() {
                       disabled={!canProceedToNext}
                       className={`px-4 sm:px-6 py-2.5 sm:py-3 w-full sm:w-auto ${
                         canProceedToNext 
-                          ? "bg-sky-500 hover:bg-sky-600" 
-                          : "bg-gray-300 cursor-not-allowed"
+                          ? "bg-green-500 hover:bg-green-600 text-white" 
+                          : "bg-gray-300 cursor-not-allowed text-gray-500"
                       }`}
                     >
                       Tiếp tục
@@ -629,7 +587,7 @@ export default function CheckoutPage() {
                     <Button
                       onClick={handleSubmit}
                       disabled={isProcessingPayment}
-                      className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 px-6 sm:px-8 py-2.5 sm:py-3 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 sm:px-8 py-2.5 sm:py-3 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isProcessingPayment ? (
                         <>
@@ -655,9 +613,47 @@ export default function CheckoutPage() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className="sticky top-4 sm:top-6 lg:top-8"
+              className="sticky top-4 sm:top-6 lg:top-8 space-y-4"
             >
-              <OrderSummary items={checkoutItems} />
+              {/* Free Shipping Progress */}
+              {totalPrice < FREE_SHIPPING_THRESHOLD && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-gradient-to-r from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-xl p-4"
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Sparkles className="w-5 h-5 text-orange-600" />
+                    <h3 className="font-bold text-orange-900">Miễn phí vận chuyển</h3>
+                  </div>
+                  <p className="text-sm text-orange-800 mb-3">
+                    Mua thêm <span className="font-bold">{amountNeededForFreeShipping.toLocaleString('vi-VN')} đ</span> để được miễn phí vận chuyển
+                  </p>
+                  <div className="w-full bg-orange-200 rounded-full h-2">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(totalPrice / FREE_SHIPPING_THRESHOLD) * 100}%` }}
+                      transition={{ duration: 0.5 }}
+                      className="bg-gradient-to-r from-orange-500 to-yellow-500 h-2 rounded-full"
+                    />
+                  </div>
+                </motion.div>
+              )}
+
+              {totalPrice >= FREE_SHIPPING_THRESHOLD && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl p-4"
+                >
+                  <div className="flex items-center gap-2">
+                    <Gift className="w-5 h-5 text-green-600" />
+                    <p className="font-bold text-green-900">🎉 Bạn được miễn phí vận chuyển!</p>
+                  </div>
+                </motion.div>
+              )}
+
+              <OrderSummary items={checkoutItems} shippingFee={shippingFee} />
             </motion.div>
           </div>
         </div>
@@ -670,28 +666,7 @@ export default function CheckoutPage() {
       {/* Login Modal */}
       <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
       
-      {/* Payment Processing Modal */}
-      {/* Sepay QR Payment Modal */}
-      {showSepayQR && sepayQRData && (
-        <SepayQRPayment
-          orderCode={sepayQRData.orderCode}
-          amount={sepayQRData.amount}
-          bankAccount={sepayQRData.bankAccount}
-          bankName={sepayQRData.bankName}
-          onSuccess={() => {
-            setShowSepayQR(false);
-            // Clear cart after successful payment
-            if (buyNowItems.length > 0) {
-              clearBuyNowItems();
-            }
-            router.push(`/success?order=${sepayQRData.orderCode}`);
-          }}
-          onCancel={() => {
-            setShowSepayQR(false);
-            setSepayQRData(null);
-          }}
-        />
-      )}
+
     </div>
   );
 }

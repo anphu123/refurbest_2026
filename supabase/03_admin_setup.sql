@@ -6,7 +6,7 @@
 -- 1. Đảm bảo admin account có role = 'admin' trong metadata
 UPDATE auth.users
 SET raw_user_meta_data = coalesce(raw_user_meta_data, '{}'::jsonb) || jsonb_build_object('role','admin')
-WHERE email = 'admin@hoithoxanh.com';
+WHERE email = 'admin@dienthoaivui.vn';
 
 -- 2. Tạo function is_admin nếu chưa có (dùng chung với chat/questions)
 -- Lưu ý: Dùng user_id làm parameter name để tương thích với function đã có
@@ -24,21 +24,21 @@ BEGIN
   IF user_id IS NULL THEN
     RETURN false;
   END IF;
-  
+
   BEGIN
-    SELECT 
-      email, 
-      coalesce(raw_user_meta_data->>'role', '') 
+    SELECT
+      email,
+      coalesce(raw_user_meta_data->>'role', '')
     INTO user_email_val, user_role_val
     FROM auth.users
     WHERE id = user_id
     LIMIT 1;
-    
+
     IF NOT FOUND THEN
       RETURN false;
     END IF;
-    
-    RETURN (user_email_val = 'admin@hoithoxanh.com' OR user_role_val = 'admin');
+
+    RETURN (user_email_val = 'admin@dienthoaivui.vn' OR user_role_val = 'admin');
   EXCEPTION WHEN OTHERS THEN
     RETURN false;
   END;
@@ -89,6 +89,28 @@ CREATE POLICY "admin delete categories"
 ON categories FOR DELETE
 TO authenticated
 USING (public.is_admin(auth.uid()));
+
+-- 8. Admin policies cho banners (slideshow)
+DROP POLICY IF EXISTS "admin insert banners" ON banners;
+DROP POLICY IF EXISTS "admin update banners" ON banners;
+DROP POLICY IF EXISTS "admin delete banners" ON banners;
+
+CREATE POLICY "admin insert banners"
+ON banners FOR INSERT
+TO authenticated
+WITH CHECK (public.is_admin(auth.uid()));
+
+CREATE POLICY "admin update banners"
+ON banners FOR UPDATE
+TO authenticated
+USING (public.is_admin(auth.uid()))
+WITH CHECK (public.is_admin(auth.uid()));
+
+CREATE POLICY "admin delete banners"
+ON banners FOR DELETE
+TO authenticated
+USING (public.is_admin(auth.uid()));
+
 
 -- 6. Admin policies cho orders (xem và cập nhật tất cả đơn hàng)
 DROP POLICY IF EXISTS "admin view all orders" ON orders;

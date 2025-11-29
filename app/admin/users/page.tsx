@@ -63,7 +63,7 @@ export default function UsersPage() {
             email: currentUser.email,
             created_at: currentUser.created_at,
             last_sign_in_at: currentUser.last_sign_in_at,
-            role: currentUser.email === 'admin@hoithoxanh.com' ? 'admin' : 'user',
+            role: currentUser.email === 'admin@refurbest.vn' ? 'admin' : 'user',
             name: currentUser.user_metadata?.full_name,
             phone: currentUser.user_metadata?.phone
           }]);
@@ -83,7 +83,7 @@ export default function UsersPage() {
             email: currentUser.email,
             created_at: currentUser.created_at,
             last_sign_in_at: currentUser.last_sign_in_at,
-            role: currentUser.email === 'admin@hoithoxanh.com' ? 'admin' : 'user',
+            role: currentUser.email === 'admin@refurbest.vn' ? 'admin' : 'user',
             name: currentUser.user_metadata?.full_name,
             phone: currentUser.user_metadata?.phone
           }]);
@@ -190,7 +190,7 @@ export default function UsersPage() {
         </div>
         <Button
           onClick={handleCreateUser}
-          className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white"
+          className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white"
         >
           <Plus className="w-4 h-4" />
           Tạo người dùng mới
@@ -222,7 +222,7 @@ export default function UsersPage() {
                 placeholder="Tìm kiếm người dùng..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
               />
             </div>
           </div>
@@ -231,7 +231,7 @@ export default function UsersPage() {
         <div className="p-6">
           {loading ? (
             <div className="text-center py-12">
-              <div className="w-12 h-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
               <p className="text-gray-600">Đang tải danh sách người dùng...</p>
             </div>
           ) : filteredUsers.length === 0 ? (
@@ -321,11 +321,11 @@ export default function UsersPage() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleEditUser(user)}
-                              className="text-sky-600 hover:text-sky-700 hover:bg-sky-50"
+                              className="text-green-600 hover:text-green-700 hover:bg-green-50"
                             >
                               <Edit className="w-4 h-4" />
                             </Button>
-                            {user.email !== 'admin@hoithoxanh.com' && (
+                            {user.email !== 'admin@refurbest.vn' && (
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -393,7 +393,7 @@ export default function UsersPage() {
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                       required
                     />
                   </div>
@@ -406,7 +406,7 @@ export default function UsersPage() {
                       type="password"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                       required={!editingUser}
                     />
                   </div>
@@ -419,7 +419,7 @@ export default function UsersPage() {
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
 
@@ -431,7 +431,7 @@ export default function UsersPage() {
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
 
@@ -442,7 +442,7 @@ export default function UsersPage() {
                     <select
                       value={formData.role}
                       onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
                       <option value="user">User</option>
                       <option value="admin">Admin</option>
@@ -458,7 +458,7 @@ export default function UsersPage() {
                   <div className="flex gap-3 pt-4">
                     <Button
                       onClick={handleSaveUser}
-                      className="flex-1 bg-sky-500 hover:bg-sky-600 text-white"
+                      className="flex-1 bg-green-500 hover:bg-green-600 text-white"
                     >
                       {editingUser ? "Cập nhật" : "Tạo mới"}
                     </Button>

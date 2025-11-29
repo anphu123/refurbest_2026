@@ -10,7 +10,7 @@ export default function AdminLoginPage() {
 
   useEffect(() => {
     // Redirect to admin dashboard if already logged in as admin
-    if (user && user.email === 'admin@hoithoxanh.com') {
+    if (user && user.email === 'admin@refurbest.vn') {
       router.push('/admin/dashboard');
       return;
     }
@@ -22,7 +22,7 @@ export default function AdminLoginPage() {
   // Don't render anything while redirecting
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
     </div>
   );
 }

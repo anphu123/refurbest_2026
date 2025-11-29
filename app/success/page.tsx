@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Botchat from "@/components/Botchat";
 
 export default function SuccessPage() {
   const [showConfetti, setShowConfetti] = useState(false);
@@ -116,13 +117,13 @@ export default function SuccessPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="bg-gradient-to-r from-sky-50 to-blue-50 border border-sky-200 rounded-2xl p-6 mb-8"
+            className="bg-gradient-to-r from-green-50 to-green-50 border border-green-200 rounded-2xl p-6 mb-8"
           >
             <h2 className="text-xl font-bold text-gray-900 mb-4">Thông tin đơn hàng</h2>
             <div className="grid md:grid-cols-2 gap-4 text-sm">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-sky-100 rounded-full flex items-center justify-center">
-                  <Package className="w-4 h-4 text-sky-600" />
+                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                  <Package className="w-4 h-4 text-green-600" />
                 </div>
                 <div className="text-left">
                   <p className="font-semibold text-gray-900">Mã đơn hàng</p>
@@ -130,8 +131,8 @@ export default function SuccessPage() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-sky-100 rounded-full flex items-center justify-center">
-                  <Truck className="w-4 h-4 text-sky-600" />
+                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                  <Truck className="w-4 h-4 text-green-600" />
                 </div>
                 <div className="text-left">
                   <p className="font-semibold text-gray-900">Dự kiến giao hàng</p>
@@ -151,8 +152,8 @@ export default function SuccessPage() {
             <h3 className="text-lg font-bold text-gray-900 mb-4">Bước tiếp theo</h3>
             <div className="grid md:grid-cols-3 gap-4 text-sm">
               <div className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Package className="w-5 h-5 text-blue-600" />
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <Package className="w-5 h-5 text-green-600" />
                 </div>
                 <p className="font-semibold text-gray-900">Chuẩn bị hàng</p>
                 <p className="text-gray-600 text-center">Đơn hàng đang được chuẩn bị</p>
@@ -182,7 +183,7 @@ export default function SuccessPage() {
             className="flex justify-center"
           >
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button asChild className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 px-8 py-3">
+              <Button asChild className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-3">
                 <Link href="/" className="flex items-center gap-2">
                   <Home className="w-4 h-4" />
                   <span>Về trang chủ</span>
@@ -194,6 +195,7 @@ export default function SuccessPage() {
       </motion.div>
       </div>
       <Footer />
+      <Botchat />
     </div>
   );
 }

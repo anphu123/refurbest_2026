@@ -96,7 +96,7 @@ export default function CartDrawer() {
             className="fixed right-2 top-20 h-[calc(100vh-5rem)] w-full max-w-md bg-white shadow-2xl z-50 flex flex-col rounded-2xl overflow-hidden"
           >
             {/* Enhanced Header */}
-            <div className="bg-gradient-to-r from-sky-500 to-blue-600 text-white p-6 relative overflow-hidden">
+            <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 relative overflow-hidden">
               {/* Background Pattern */}
               <div className="absolute inset-0 opacity-10">
                 <div className="absolute top-4 right-4 w-20 h-20 rounded-full bg-white/20"></div>
@@ -147,7 +147,7 @@ export default function CartDrawer() {
                   </motion.div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">Giỏ hàng trống</h3>
                   <p className="text-gray-600 mb-6">Hãy thêm sản phẩm vào giỏ hàng để tiếp tục</p>
-                  <Button onClick={closeCart} className="bg-sky-500 hover:bg-sky-600">
+                  <Button onClick={closeCart} className="bg-green-500 hover:bg-green-600 text-white">
                     Tiếp tục mua sắm
                   </Button>
                 </motion.div>
@@ -196,7 +196,7 @@ export default function CartDrawer() {
                             
                             {/* Enhanced Price */}
                             <div className="flex items-center gap-2 mb-3">
-                              <span className="font-bold text-sky-600 text-sm">
+                              <span className="font-bold text-green-600 text-sm">
                                 {formatPrice(item.product.price)}
                               </span>
                               {item.product.originalPrice && item.product.originalPrice > item.product.price && (
@@ -226,9 +226,9 @@ export default function CartDrawer() {
                                   whileHover={{ scale: 1.1 }}
                                   whileTap={{ scale: 0.9 }}
                                   onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                                  className="w-7 h-7 bg-sky-100 hover:bg-sky-200 rounded-full flex items-center justify-center transition-colors"
+                                  className="w-7 h-7 bg-green-100 hover:bg-green-200 rounded-full flex items-center justify-center transition-colors"
                                 >
-                                  <Plus className="w-3 h-3 text-sky-600" />
+                                  <Plus className="w-3 h-3 text-green-600" />
                                 </motion.button>
                               </div>
 
@@ -293,7 +293,7 @@ export default function CartDrawer() {
                   
                   <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-3">
                     <span>Tổng cộng:</span>
-                    <span className="text-sky-600">{formatPrice(finalTotal)}</span>
+                    <span className="text-green-600">{formatPrice(finalTotal)}</span>
                   </div>
                   
                   {!isFreeShipping && (
@@ -317,7 +317,7 @@ export default function CartDrawer() {
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                     <Button 
                       asChild
-                      className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all"
+                      className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all"
                     >
                       <Link href="/checkout" onClick={closeCart}>
                         <span>Thanh toán ngay</span>
@@ -329,7 +329,7 @@ export default function CartDrawer() {
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                     <Button 
                       variant="outline" 
-                      className="w-full h-10 border-gray-300 hover:border-sky-400 hover:text-sky-600 transition-colors"
+                      className="w-full h-10 border-gray-300 hover:border-green-400 hover:text-green-600 transition-colors"
                       onClick={closeCart}
                     >
                       Tiếp tục mua sắm

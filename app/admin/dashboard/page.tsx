@@ -302,8 +302,8 @@ export default function AdminDashboardPage() {
       label: "Tổng sản phẩm",
       value: stats.totalProducts,
       color: "blue",
-      bgColor: "bg-blue-50",
-      iconColor: "text-blue-600",
+      bgColor: "bg-green-50",
+      iconColor: "text-green-600",
     },
     {
       icon: ShoppingBag,
@@ -334,7 +334,7 @@ export default function AdminDashboardPage() {
 
   const statusColors: Record<string, string> = {
     pending: 'bg-yellow-100 text-yellow-800',
-    processing: 'bg-blue-100 text-blue-800',
+    processing: 'bg-green-100 text-green-800',
     shipped: 'bg-purple-100 text-purple-800',
     delivered: 'bg-green-100 text-green-800',
     cancelled: 'bg-red-100 text-red-800',
@@ -351,7 +351,7 @@ export default function AdminDashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
       </div>
     );
   }
@@ -718,7 +718,7 @@ export default function AdminDashboardPage() {
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-gray-900">Đơn hàng gần đây</h2>
-            <a href="/admin/orders" className="text-sm text-sky-600 hover:text-sky-700 font-medium">
+            <a href="/admin/orders" className="text-sm text-green-600 hover:text-green-700 font-medium">
               Xem tất cả →
             </a>
           </div>
@@ -795,8 +795,8 @@ export default function AdminDashboardPage() {
 
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-blue-600" />
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Tỷ lệ hoàn thành</p>
@@ -825,7 +825,7 @@ export default function AdminDashboardPage() {
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-gray-900">Câu hỏi chưa trả lời</h2>
-            <a href="/admin/contacts" className="text-sm text-sky-600 hover:text-sky-700 font-medium">Xem tất cả →</a>
+            <a href="/admin/contacts" className="text-sm text-green-600 hover:text-green-700 font-medium">Xem tất cả →</a>
           </div>
           <div className="space-y-3">
             {unanswered.length === 0 ? (
@@ -853,7 +853,7 @@ export default function AdminDashboardPage() {
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-gray-900">Câu hỏi đã trả lời</h2>
-            <a href="/admin/contacts" className="text-sm text-sky-600 hover:text-sky-700 font-medium">Xem tất cả →</a>
+            <a href="/admin/contacts" className="text-sm text-green-600 hover:text-green-700 font-medium">Xem tất cả →</a>
           </div>
           <div className="space-y-3">
             {answered.length === 0 ? (

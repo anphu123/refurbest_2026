@@ -30,22 +30,17 @@ export default function NewsSection() {
           .eq('status', 'published')
           .order('published_at', { ascending: false })
           .limit(5);
-        
+
         if (error) {
-          // Table might not exist yet, silently fail
-          if (error.code === 'PGRST205' || error.message?.includes('Could not find the table')) {
-            setNews([]);
-          } else {
-            console.error('Error loading news:', error);
-            setNews([]);
-          }
+          console.error('Error loading news:', error);
+          setNews([]);
         } else if (data) {
           setNews(data as NewsItem[]);
         } else {
           setNews([]);
         }
       } catch (e) {
-        // Silently handle errors - table might not exist
+        console.error('Exception loading news:', e);
         setNews([]);
       } finally {
         setLoading(false);
@@ -61,7 +56,7 @@ export default function NewsSection() {
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 1) return "1 ngày trước";
     if (diffDays < 7) return `${diffDays} ngày trước`;
     if (diffDays < 30) return `${Math.floor(diffDays / 7)} tuần trước`;
@@ -69,14 +64,11 @@ export default function NewsSection() {
     return `${Math.floor(diffDays / 365)} năm trước`;
   };
 
-  // Fallback news nếu chưa có data
-  const fallbackNews: NewsItem[] = [];
-
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-bold text-gray-900">Tin tức sản phẩm</h3>
-        <Link href="/news" className="text-sky-500 hover:text-sky-600 text-sm font-semibold flex items-center gap-1 group transition-all">
+        <Link href="/news" className="text-green-500 hover:text-green-600 text-sm font-semibold flex items-center gap-1 group transition-all">
           Xem tất cả
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </Link>
@@ -122,7 +114,7 @@ export default function NewsSection() {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-2 group-hover:text-sky-500 transition-colors">
+                <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-2 group-hover:text-green-500 transition-colors">
                   {item.title}
                 </h4>
                 <div className="flex items-center gap-1 text-xs text-gray-500">

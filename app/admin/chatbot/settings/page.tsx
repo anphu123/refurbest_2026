@@ -32,7 +32,7 @@ export default function ChatbotSettingsPage() {
     schedule_start: "08:00",
     schedule_end: "22:00",
     timezone: "Asia/Ho_Chi_Minh",
-    default_prompt: "Bạn là nhân viên tư vấn bán hàng của công ty máy lọc không khí. Hãy trả lời một cách thân thiện, chuyên nghiệp và hỗ trợ khách hàng.",
+    default_prompt: "Bạn là nhân viên tư vấn bán hàng của cửa hàng điện thoại. Hãy trả lời thân thiện, chuyên nghiệp và hỗ trợ khách mua điện thoại/phụ kiện.",
     agent_name: "Chị Lan",
     agent_avatar: "",
     agent_title: "Tư vấn viên",
@@ -94,9 +94,9 @@ export default function ChatbotSettingsPage() {
             .single();
 
           if (insertError) {
-            console.error('Error creating default settings:', insertError);
             // If insert fails (e.g., RLS blocking), just continue without settings
-            // User can still configure later
+            // User can still configure later - silently handle the error
+            console.log('Using default settings (database insert not available)');
           } else if (newData) {
             setSettings(newData);
             setFormData({
@@ -188,7 +188,7 @@ export default function ChatbotSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -197,7 +197,7 @@ export default function ChatbotSettingsPage() {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-          <Bot className="w-8 h-8 text-sky-600" />
+          <Bot className="w-8 h-8 text-green-600" />
           Cài đặt AI Chatbot
         </h1>
         <p className="text-gray-600 mt-2">Cấu hình AI chatbot tự động phản hồi khách hàng</p>
@@ -208,10 +208,10 @@ export default function ChatbotSettingsPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-sky-50 rounded-lg border border-blue-200"
+          className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-green-50 rounded-lg border border-green-200"
         >
           <div className="flex items-center gap-3">
-            <Bot className="w-6 h-6 text-sky-600" />
+            <Bot className="w-6 h-6 text-green-600" />
             <div>
               <h3 className="font-semibold text-gray-900">Bật/Tắt AI Chatbot</h3>
               <p className="text-sm text-gray-600">Khi bật, AI sẽ tự động phản hồi khách hàng</p>
@@ -224,14 +224,14 @@ export default function ChatbotSettingsPage() {
               onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-sky-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-600"></div>
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
           </label>
         </motion.div>
 
         {/* Lịch trình hoạt động */}
         <div className="space-y-4 border-t border-gray-200 pt-6">
           <div className="flex items-center gap-2 mb-4">
-            <Clock className="w-5 h-5 text-sky-600" />
+            <Clock className="w-5 h-5 text-green-600" />
             <h3 className="text-lg font-semibold text-gray-900">Lịch trình hoạt động</h3>
           </div>
 
@@ -243,7 +243,7 @@ export default function ChatbotSettingsPage() {
                 onChange={(e) => setFormData({ ...formData, schedule_enabled: e.target.checked })}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-sky-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-600"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
             </label>
             <span className="text-gray-700">Bật lịch trình tự động</span>
           </div>
@@ -256,7 +256,7 @@ export default function ChatbotSettingsPage() {
                   type="time"
                   value={formData.schedule_start}
                   onChange={(e) => setFormData({ ...formData, schedule_start: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                 />
               </div>
               <div>
@@ -265,7 +265,7 @@ export default function ChatbotSettingsPage() {
                   type="time"
                   value={formData.schedule_end}
                   onChange={(e) => setFormData({ ...formData, schedule_end: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                 />
               </div>
             </div>
@@ -275,7 +275,7 @@ export default function ChatbotSettingsPage() {
         {/* Prompt mặc định */}
         <div className="space-y-4 border-t border-gray-200 pt-6">
           <div className="flex items-center gap-2 mb-4">
-            <FileText className="w-5 h-5 text-sky-600" />
+            <FileText className="w-5 h-5 text-green-600" />
             <h3 className="text-lg font-semibold text-gray-900">Prompt mặc định</h3>
           </div>
           <textarea
@@ -283,7 +283,7 @@ export default function ChatbotSettingsPage() {
             onChange={(e) => setFormData({ ...formData, default_prompt: e.target.value })}
             rows={6}
             placeholder="Nhập prompt để AI hiểu vai trò và cách phản hồi..."
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 resize-none"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none"
           />
           <p className="text-sm text-gray-500">Prompt này sẽ được gửi cho AI để định hướng cách phản hồi</p>
         </div>
@@ -291,7 +291,7 @@ export default function ChatbotSettingsPage() {
         {/* Thông tin nhân viên hiển thị */}
         <div className="space-y-4 border-t border-gray-200 pt-6">
           <div className="flex items-center gap-2 mb-4">
-            <User className="w-5 h-5 text-sky-600" />
+            <User className="w-5 h-5 text-green-600" />
             <h3 className="text-lg font-semibold text-gray-900">Thông tin nhân viên hiển thị</h3>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
@@ -302,7 +302,7 @@ export default function ChatbotSettingsPage() {
                 value={formData.agent_name}
                 onChange={(e) => setFormData({ ...formData, agent_name: e.target.value })}
                 placeholder="VD: Chị Lan"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
               />
             </div>
             <div>
@@ -312,7 +312,7 @@ export default function ChatbotSettingsPage() {
                 value={formData.agent_title}
                 onChange={(e) => setFormData({ ...formData, agent_title: e.target.value })}
                 placeholder="VD: Tư vấn viên"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
               />
             </div>
           </div>
@@ -323,7 +323,7 @@ export default function ChatbotSettingsPage() {
               value={formData.agent_avatar}
               onChange={(e) => setFormData({ ...formData, agent_avatar: e.target.value })}
               placeholder="https://example.com/avatar.jpg"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
             />
           </div>
         </div>
@@ -331,7 +331,7 @@ export default function ChatbotSettingsPage() {
         {/* API Key */}
         <div className="space-y-4 border-t border-gray-200 pt-6">
           <div className="flex items-center gap-2 mb-4">
-            <Key className="w-5 h-5 text-sky-600" />
+            <Key className="w-5 h-5 text-green-600" />
             <h3 className="text-lg font-semibold text-gray-900">API Key Gemini</h3>
           </div>
           <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
@@ -348,9 +348,9 @@ export default function ChatbotSettingsPage() {
             value={formData.api_key}
             onChange={(e) => setFormData({ ...formData, api_key: e.target.value })}
             placeholder={settings?.api_key ? "Nhập API key mới để thay đổi" : "Nhập API key Gemini"}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
           />
-          <p className="text-sm text-gray-500">Lấy API key tại: <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:underline">Google AI Studio</a></p>
+          <p className="text-sm text-gray-500">Lấy API key tại: <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">Google AI Studio</a></p>
         </div>
 
         {/* Save Button */}
@@ -358,7 +358,7 @@ export default function ChatbotSettingsPage() {
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {saving ? (
               <>

@@ -2,20 +2,20 @@
 
 import { ChevronDown } from "lucide-react";
 import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function InfoSection() {
   const [expanded, setExpanded] = useState(false);
 
   const tocItems = [
-    "Máy lọc không khí là gì?",
-    "Vì sao cần máy lọc không khí?",
-    "Các công nghệ lọc không khí phổ biến",
-    "Cách chọn máy lọc không khí phù hợp",
-    "Máy lọc không khí cho phòng nhỏ",
-    "Máy lọc không khí cho phòng lớn",
-    "Các tiêu chí chọn mua máy lọc không khí",
-    "Lưu ý quan trọng khi sử dụng máy lọc không khí",
+    "Chọn hệ điều hành: iOS hay Android?",
+    "Các thương hiệu điện thoại phổ biến",
+    "Tiêu chí chọn mua điện thoại quan trọng",
+    "Chọn điện thoại theo nhu cầu sử dụng",
+    "Phân khúc giá điện thoại",
+    "Các thông số kỹ thuật cần biết",
+    "Phụ kiện điện thoại cần thiết",
+    "Lưu ý khi mua và sử dụng điện thoại",
   ];
 
   const slugify = useCallback((s: string) => {
@@ -52,16 +52,16 @@ export default function InfoSection() {
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold mb-6 text-gray-900">
-            Thông tin quan trọng về máy lọc không khí
+            Thông tin cần biết khi mua điện thoại
           </h2>
 
           <div className="prose max-w-none text-gray-700 leading-relaxed">
             <p className="mb-6">
-              <strong>Máy lọc không khí</strong> đã trở thành thiết bị thiết yếu trong nhiều gia đình Việt hiện nay, đặc biệt là tại các thành phố lớn với mức độ ô nhiễm không khí cao. Không chỉ đơn thuần là thiết bị gia dụng, máy lọc không khí hiện đại được tích hợp nhiều công nghệ tiên tiến, giúp bảo vệ sức khỏe gia đình bạn. Tham khảo ngay bài viết dưới đây để có cái nhìn tổng quan về thế giới máy lọc không khí!
+              Điện thoại thông minh ngày nay là thiết bị không thể thiếu trong học tập, công việc và giải trí. Từ hiệu năng, camera cho đến thời lượng pin và hệ sinh thái, mỗi yếu tố đều ảnh hưởng lớn đến trải nghiệm sử dụng. Bài viết dưới đây sẽ giúp bạn có cái nhìn tổng quan để chọn chiếc điện thoại phù hợp với nhu cầu và ngân sách của mình.
             </p>
 
             {/* Table of Contents */}
-            <div className="bg-sky-50 rounded-lg p-6 mb-8 border border-sky-200">
+            <div className="bg-green-50 rounded-lg p-6 mb-8 border border-green-200">
               <h3 className="font-bold text-lg mb-4 text-gray-900">Nội dung chính</h3>
               <ol className="list-decimal list-inside space-y-2">
                 {tocItems.map((item, index) => {
@@ -70,7 +70,7 @@ export default function InfoSection() {
                     <li
                       key={index}
                       onClick={() => handleScrollTo(id)}
-                      className="text-gray-700 hover:text-sky-500 cursor-pointer transition-colors"
+                      className="text-gray-700 hover:text-green-500 cursor-pointer transition-colors"
                     >
                       {item}
                     </li>
@@ -92,26 +92,19 @@ export default function InfoSection() {
             >
               <div className="space-y-8">
                 <section id={slugify(tocItems[0])}>
-                  <h3 className="text-xl font-bold mb-4 text-gray-900">Máy lọc không khí là gì?</h3>
+                  <h3 className="text-xl font-bold mb-4 text-gray-900">Chọn hệ điều hành: iOS hay Android?</h3>
                   <p className="mb-4">
-                    Máy lọc không khí là thiết bị được thiết kế để loại bỏ các chất ô nhiễm, bụi bẩn, vi khuẩn, virus và các hạt có hại trong không khí. Thiết bị này sử dụng các bộ lọc và công nghệ khác nhau để làm sạch không khí, tạo ra môi trường trong lành và an toàn cho sức khỏe.
-                  </p>
-                  <p className="mb-4">
-                    Máy lọc không khí hiện đại không chỉ lọc bụi mà còn có khả năng loại bỏ mùi hôi, khí độc, nấm mốc và các tác nhân gây dị ứng, giúp cải thiện chất lượng không khí trong nhà một cách đáng kể.
+                    Đây là quyết định quan trọng đầu tiên. <strong>iOS (Apple)</strong> nổi tiếng với sự ổn định, hệ sinh thái đồng bộ và bảo mật cao. <strong>Android (Google)</strong> mang lại sự tùy biến linh hoạt, đa dạng về mẫu mã và mức giá.
                   </p>
                 </section>
 
                 <section id={slugify(tocItems[1])}>
-                  <h3 className="text-xl font-bold mb-4 text-gray-900">Vì sao cần máy lọc không khí?</h3>
-                  <p className="mb-4">
-                    Không khí trong nhà có thể ô nhiễm gấp 2-5 lần so với không khí ngoài trời. Điều này là do các yếu tố như bụi từ nội thất, khí thải từ sơn, chất tẩy rửa, nấm mốc và vi khuẩn tích tụ. Máy lọc không khí cần thiết bởi:
-                  </p>
+                  <h3 className="text-xl font-bold mb-4 text-gray-900">Các thương hiệu điện thoại phổ biến</h3>
                   <ul className="list-disc list-inside space-y-2 mb-4">
-                    <li>Bảo vệ sức khỏe hô hấp, đặc biệt quan trọng với người già, trẻ em và người có bệnh hen suyễn</li>
-                    <li>Loại bỏ bụi mịn PM2.5, PM10 - nguyên nhân gây các bệnh về phổi và tim mạch</li>
-                    <li>Tiêu diệt vi khuẩn, virus và nấm mốc trong không khí</li>
-                    <li>Khử mùi hôi, tạo không gian sống dễ chịu và thoải mái</li>
-                    <li>Cải thiện chất lượng giấc ngủ và nâng cao năng suất làm việc</li>
+                    <li><strong>Apple (iPhone):</strong> Dẫn đầu phân khúc cao cấp, hiệu năng mạnh mẽ, camera xuất sắc.</li>
+                    <li><strong>Samsung:</strong> Đa dạng từ phổ thông đến cao cấp, màn hình đẹp, nhiều tính năng sáng tạo.</li>
+                    <li><strong>Xiaomi:</strong> Cấu hình cao so với giá, pin tốt, sạc nhanh.</li>
+                    <li><strong>OPPO:</strong> Thiết kế thời trang, chuyên gia selfie, công nghệ sạc nhanh VOOC.</li>
                   </ul>
                 </section>
 
@@ -129,67 +122,54 @@ export default function InfoSection() {
                   style={{ overflow: "hidden" }}
                 >
                   <section id={slugify(tocItems[2])}>
-                    <h3 className="text-xl font-bold mb-4 text-gray-900">Các công nghệ lọc không khí phổ biến</h3>
+                    <h3 className="text-xl font-bold mb-4 text-gray-900">Tiêu chí chọn mua điện thoại quan trọng</h3>
                     <div className="space-y-4">
                       <div>
-                        <h4 className="font-semibold mb-2 text-sky-500">Công nghệ HEPA</h4>
-                        <p>Lọc được 99.97% các hạt có kích thước từ 0.3 micron trở lên, hiệu quả cao với bụi mịn, phấn hoa và một số vi khuẩn.</p>
+                        <h4 className="font-semibold mb-2 text-green-500">Màn hình</h4>
+                        <p>Kích thước, độ phân giải (Full HD+, 2K+), công nghệ tấm nền (AMOLED cho màu sắc rực rỡ, IPS LCD cho màu sắc trung thực) và tần số quét (90Hz, 120Hz cho trải nghiệm mượt mà).</p>
                       </div>
                       <div>
-                        <h4 className="font-semibold mb-2 text-sky-500">Công nghệ Ion</h4>
-                        <p>Tạo ra các ion âm để trung hòa các hạt tích điện dương trong không khí, giúp chúng rơi xuống đất và dễ dàng làm sạch.</p>
+                        <h4 className="font-semibold mb-2 text-green-500">Hiệu năng (Chip & RAM)</h4>
+                        <p>Chip Snapdragon của Qualcomm và Dimensity của MediaTek phổ biến trên Android. Chip A-series của Apple luôn dẫn đầu về hiệu năng. RAM 6GB trở lên là đủ cho hầu hết tác vụ.</p>
                       </div>
                       <div>
-                        <h4 className="font-semibold mb-2 text-purple-600">Công nghệ UV-C</h4>
-                        <p>Sử dụng tia cực tím để tiêu diệt vi khuẩn, virus và nấm mốc, đặc biệt hiệu quả trong việc khử trùng không khí.</p>
+                        <h4 className="font-semibold mb-2 text-purple-600">Camera</h4>
+                        <p>Đừng chỉ nhìn vào 'số chấm' (Megapixel). Chất lượng ảnh phụ thuộc vào cảm biến, ống kính và thuật toán xử lý. Hãy xem các bài đánh giá camera thực tế.</p>
                       </div>
                       <div>
-                        <h4 className="font-semibold mb-2 text-orange-600">Công nghệ Carbon</h4>
-                        <p>Hấp thụu các khí độc, mùi hôi và các hợp chất hữu cơ dễ bay hơi (VOC) từ không khí.</p>
-                      </div>
-                    </div>
-                  </section>
-
-                  <section id={slugify(tocItems[6])}>
-                    <h3 className="text-xl font-bold mb-4 text-gray-900">Các tiêu chí chọn mua máy lọc không khí</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="font-semibold mb-2">Diện tích phòng</h4>
-                        <p>Chọn máy có công suất phù hợp với diện tích phòng. Máy có CADR (Clean Air Delivery Rate) cao sẽ lọc không khí hiệu quả hơn.</p>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-2">Công nghệ lọc</h4>
-                        <p>Kết hợp nhiều công nghệ lọc (HEPA + Carbon + UV) sẽ cho hiệu quả tốt nhất. Ưu tiên máy có bộ lọc HEPA thật.</p>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-2">Mức độ tiếng ồn</h4>
-                        <p>Chọn máy có mức tiếng ồn thấp (dưới 50dB) để không ảnh hưởng đến giấc ngủ và sinh hoạt.</p>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-2">Chi phí vận hành</h4>
-                        <p>Xem xét chi phí điện năng và thay thế bộ lọc định kỳ để đảm bảo hiệu quả lâu dài.</p>
+                        <h4 className="font-semibold mb-2 text-orange-600">Pin và Sạc</h4>
+                        <p>Dung lượng pin (mAh) càng cao càng tốt. Công nghệ sạc nhanh (25W, 67W, 120W) giúp tiết kiệm thời gian đáng kể.</p>
                       </div>
                     </div>
                   </section>
 
                   <section id={slugify(tocItems[3])}>
-                    <h3 className="text-xl font-bold mb-4 text-gray-900">Cách chọn máy lọc không khí phù hợp</h3>
-                    <p className="mb-4">Xác định nhu cầu sử dụng, diện tích phòng, mức độ ô nhiễm và ngân sách. Ưu tiên các model có chứng nhận hiệu quả lọc và dễ thay thế bộ lọc.</p>
+                    <h3 className="text-xl font-bold mb-4 text-gray-900">Chọn điện thoại theo nhu cầu sử dụng</h3>
+                    <p className="mb-4"><strong>Chơi game:</strong> Cần chip mạnh, màn hình tần số quét cao, pin trâu. <strong>Chụp ảnh:</strong> Ưu tiên các dòng flagship của Apple, Samsung, Google hoặc các máy có hợp tác với hãng máy ảnh (Leica, Hasselblad). <strong>Sử dụng cơ bản:</strong> Các máy tầm trung của Samsung, Xiaomi, OPPO là lựa chọn hợp lý.</p>
                   </section>
 
                   <section id={slugify(tocItems[4])}>
-                    <h3 className="text-xl font-bold mb-4 text-gray-900">Máy lọc không khí cho phòng nhỏ</h3>
-                    <p className="mb-4">Chọn công suất vừa đủ, kích thước nhỏ gọn, độ ồn thấp, tiết kiệm điện. Phù hợp phòng ngủ hoặc phòng làm việc cá nhân.</p>
+                    <h3 className="text-xl font-bold mb-4 text-gray-900">Phân khúc giá điện thoại</h3>
+                     <ul className="list-disc list-inside space-y-2 mb-4">
+                        <li><strong>Phổ thông (dưới 7 triệu):</strong> Đáp ứng tốt nhu cầu cơ bản như nghe gọi, lướt web, mạng xã hội.</li>
+                        <li><strong>Tầm trung (7 - 15 triệu):</strong> Cân bằng giữa hiệu năng, camera và thiết kế. Phù hợp với đa số người dùng.</li>
+                        <li><strong>Cao cấp (trên 15 triệu):</strong> Hiệu năng đỉnh cao, camera chuyên nghiệp, thiết kế sang trọng và những công nghệ mới nhất.</li>
+                     </ul>
                   </section>
 
                   <section id={slugify(tocItems[5])}>
-                    <h3 className="text-xl font-bold mb-4 text-gray-900">Máy lọc không khí cho phòng lớn</h3>
-                    <p className="mb-4">Ưu tiên CADR cao, lưu lượng gió mạnh, hỗ trợ nhiều chế độ. Nên chọn máy có nhiều tầng lọc để hiệu quả ở không gian mở.</p>
+                    <h3 className="text-xl font-bold mb-4 text-gray-900">Các thông số kỹ thuật cần biết</h3>
+                    <p className="mb-4"><strong>Bộ nhớ trong (ROM):</strong> Nên chọn từ 128GB trở lên. <strong>Kết nối:</strong> 5G, Wi-Fi 6, Bluetooth 5.x là các chuẩn mới nhất. <strong>Kháng nước, bụi:</strong> Chuẩn IP67, IP68 giúp bảo vệ máy tốt hơn.</p>
+                  </section>
+
+                  <section id={slugify(tocItems[6])}>
+                    <h3 className="text-xl font-bold mb-4 text-gray-900">Phụ kiện điện thoại cần thiết</h3>
+                    <p className="mb-4">Ốp lưng và kính cường lực để bảo vệ máy. Sạc dự phòng cho những chuyến đi dài. Tai nghe không dây để trải nghiệm âm thanh tốt hơn.</p>
                   </section>
 
                   <section id={slugify(tocItems[7])}>
-                    <h3 className="text-xl font-bold mb-4 text-gray-900">Lưu ý quan trọng khi sử dụng máy lọc không khí</h3>
-                    <p className="mb-4">Đặt máy ở vị trí thông thoáng, thay bộ lọc đúng hạn, vệ sinh định kỳ và đóng cửa sổ khi cần để tăng hiệu quả lọc.</p>
+                    <h3 className="text-xl font-bold mb-4 text-gray-900">Lưu ý khi mua và sử dụng điện thoại</h3>
+                    <p className="mb-4">Kiểm tra kỹ máy trước khi nhận, giữ lại hộp và hóa đơn để bảo hành. Cập nhật phần mềm thường xuyên và không cài đặt ứng dụng từ nguồn không rõ để đảm bảo an toàn.</p>
                   </section>
                 </motion.div>
               </div>
@@ -209,7 +189,7 @@ export default function InfoSection() {
             <div className="text-center mt-6">
               <motion.button
                 onClick={() => setExpanded(!expanded)}
-                className="text-sky-500 hover:text-sky-600 font-semibold flex items-center gap-2 mx-auto"
+                className="text-green-500 hover:text-green-600 font-semibold flex items-center gap-2 mx-auto"
                 whileHover={{ scale: 1.05, transition: { duration: 0.15 } }}
                 whileTap={{ scale: 0.95, transition: { duration: 0.1 } }}
               >

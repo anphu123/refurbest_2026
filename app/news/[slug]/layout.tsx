@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   } catch {
     return {
       title: 'Tin tức',
-      description: 'Đọc tin tức về máy lọc không khí',
+      description: 'Đọc tin tức về điện thoại',
     };
   }
 }

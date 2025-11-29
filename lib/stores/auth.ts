@@ -60,7 +60,7 @@ export const useAuthStore = create<AuthState>()(
               user: { 
                 id: data.user.id, 
                 email: data.user.email,
-                role: email === 'admin@hoithoxanh.com' ? 'admin' : 'user',
+                role: email === 'admin@refurbest.vn' ? 'admin' : 'user',
                 name: (data.user.user_metadata?.full_name as string) || undefined,
                 phone: (data.user.user_metadata?.phone as string) || undefined,
                 address: (data.user.user_metadata?.address as string) || undefined,
@@ -117,7 +117,7 @@ export const useAuthStore = create<AuthState>()(
               user: { 
                 id: data.user.id, 
                 email: data.user.email,
-                role: 'user',
+                role: email === 'admin@refurbest.vn' ? 'admin' : 'user',
                 name: (data.user.user_metadata?.full_name as string) || undefined,
                 phone: (data.user.user_metadata?.phone as string) || undefined,
                 address: (data.user.user_metadata?.address as string) || undefined,
@@ -186,7 +186,7 @@ export const useAuthStore = create<AuthState>()(
               user: { 
                 id: data.user.id, 
                 email: data.user.email,
-                role: data.user.email === 'admin@hoithoxanh.com' ? 'admin' : 'user',
+                role: data.user.email === 'admin@refurbest.vn' ? 'admin' : 'user',
                 name: (data.user.user_metadata?.full_name as string) || undefined,
                 phone: (data.user.user_metadata?.phone as string) || undefined,
                 address: (data.user.user_metadata?.address as string) || undefined,
@@ -220,7 +220,7 @@ supabaseForListener.auth.getSession().then(({ data }) => {
     ? { 
         id: data.session.user.id, 
         email: data.session.user.email ?? '', 
-        role: (data.session.user.email === 'admin@hoithoxanh.com' ? 'admin' : 'user') as User['role'], 
+        role: (data.session.user.email === 'admin@refurbest.vn' ? 'admin' : 'user') as User['role'],
         name: (data.session.user.user_metadata?.full_name as string) || undefined,
         phone: (data.session.user.user_metadata?.phone as string) || undefined,
         address: (data.session.user.user_metadata?.address as string) || undefined,
@@ -236,7 +236,7 @@ supabaseForListener.auth.onAuthStateChange((_event, session) => {
     ? { 
         id: session.user.id, 
         email: session.user.email ?? '', 
-        role: (session.user.email === 'admin@hoithoxanh.com' ? 'admin' : 'user') as User['role'], 
+        role: (session.user.email === 'admin@refurbest.vn' ? 'admin' : 'user') as User['role'],
         name: (session.user.user_metadata?.full_name as string) || undefined,
         phone: (session.user.user_metadata?.phone as string) || undefined,
         address: (session.user.user_metadata?.address as string) || undefined,

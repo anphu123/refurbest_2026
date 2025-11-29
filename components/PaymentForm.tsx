@@ -12,18 +12,10 @@ export default function PaymentForm({ paymentMethod, onPaymentMethodChange }: Pa
   const paymentMethods = [
     {
       id: "cod",
-      name: "Thanh toán khi nhận hàng",
-      description: "Trả tiền mặt khi nhận được hàng",
+      name: "Thanh toán khi nhận hàng (COD)",
+      description: "Trả tiền mặt khi nhận được hàng. An toàn, tiện lợi.",
       icon: Wallet,
       color: "bg-green-500",
-      popular: true
-    },
-    {
-      id: "sepay",
-      name: "Thanh toán online - Chuyển khoản",
-      description: "Thanh toán qua QR Code hoặc chuyển khoản ngân hàng",
-      icon: Building2,
-      color: "bg-gradient-to-br from-blue-500 to-sky-600",
       popular: true
     }
   ];
@@ -40,7 +32,7 @@ export default function PaymentForm({ paymentMethod, onPaymentMethodChange }: Pa
           whileTap={{ scale: 0.99 }}
           className={`relative border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 ${
             paymentMethod === method.id
-              ? "border-sky-500 bg-sky-50 shadow-md"
+              ? "border-green-500 bg-green-50 shadow-md"
               : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
           }`}
           onClick={() => onPaymentMethodChange(method.id)}
@@ -72,7 +64,7 @@ export default function PaymentForm({ paymentMethod, onPaymentMethodChange }: Pa
                   </div>
                 )}
                 {method.id === "bank_transfer" && (
-                  <div className="flex items-center gap-1 text-xs text-blue-600">
+                  <div className="flex items-center gap-1 text-xs text-green-600">
                     <Lock className="w-3 h-3" />
                     <span>Bảo mật</span>
                   </div>
@@ -84,7 +76,7 @@ export default function PaymentForm({ paymentMethod, onPaymentMethodChange }: Pa
             {/* Radio Button */}
             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
               paymentMethod === method.id
-                ? "border-sky-500 bg-sky-500"
+                ? "border-green-500 bg-green-500"
                 : "border-gray-300"
             }`}>
               {paymentMethod === method.id && (
@@ -106,25 +98,25 @@ export default function PaymentForm({ paymentMethod, onPaymentMethodChange }: Pa
                 height: paymentMethod === method.id ? "auto" : 0 
               }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="mt-3 pt-3 border-t border-sky-100 overflow-hidden"
+              className="mt-3 pt-3 border-t border-green-100 overflow-hidden"
             >
               <div className="space-y-3">
-                <div className="bg-gradient-to-r from-blue-50 to-sky-50 rounded-lg p-3 border border-blue-100">
+                <div className="bg-gradient-to-r from-green-50 to-green-50 rounded-lg p-3 border border-green-100">
                   <p className="font-semibold text-blue-900 mb-2 text-sm flex items-center gap-2">
                     <QrCode className="w-4 h-4" />
                     Quy trình thanh toán:
                   </p>
                   <div className="space-y-2">
                     <div className="flex items-start gap-2 text-xs text-gray-700">
-                      <div className="w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold">1</div>
+                      <div className="w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold">1</div>
                       <span>Xác nhận đơn hàng và bấm <strong>&ldquo;Đặt hàng&rdquo;</strong></span>
                     </div>
                     <div className="flex items-start gap-2 text-xs text-gray-700">
-                      <div className="w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold">2</div>
+                      <div className="w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold">2</div>
                       <span>Hệ thống tạo <strong>mã QR thanh toán</strong> riêng cho đơn hàng</span>
                     </div>
                     <div className="flex items-start gap-2 text-xs text-gray-700">
-                      <div className="w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold">3</div>
+                      <div className="w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold">3</div>
                       <span>Bạn quét <strong>QR Code</strong> bằng app ngân hàng để thanh toán</span>
                     </div>
                     <div className="flex items-start gap-2 text-xs text-gray-700">
@@ -137,19 +129,19 @@ export default function PaymentForm({ paymentMethod, onPaymentMethodChange }: Pa
                 </div>
                 
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="flex items-center gap-1.5 text-xs text-blue-600">
+                  <div className="flex items-center gap-1.5 text-xs text-green-600">
                     <Shield className="w-3.5 h-3.5" />
                     <span className="font-medium">Bảo mật SSL 256-bit</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-blue-600">
+                  <div className="flex items-center gap-1.5 text-xs text-green-600">
                     <Lock className="w-3.5 h-3.5" />
                     <span className="font-medium">An toàn tuyệt đối</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-blue-600">
+                  <div className="flex items-center gap-1.5 text-xs text-green-600">
                     <Banknote className="w-3.5 h-3.5" />
                     <span className="font-medium">Không phí giao dịch</span>
                 </div>
-                  <div className="flex items-center gap-1.5 text-xs text-blue-600">
+                  <div className="flex items-center gap-1.5 text-xs text-green-600">
                     <CheckCircle className="w-3.5 h-3.5" />
                     <span className="font-medium">Xác nhận tức thì</span>
                 </div>

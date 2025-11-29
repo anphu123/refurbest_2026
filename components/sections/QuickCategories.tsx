@@ -103,7 +103,7 @@ export default function QuickCategories() {
   ].slice(0, 6);
 
   return (
-    <div className="bg-gradient-to-r from-sky-400 to-sky-300 py-6 sm:py-8">
+    <div className="bg-gradient-to-r from-green-400 to-green-300 py-6 sm:py-8">
       <div className="container mx-auto px-3 sm:px-4">
         {/* 4 Tabs - Mobile Optimized */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-6 sm:mb-8">
@@ -111,8 +111,8 @@ export default function QuickCategories() {
             onClick={() => handleTabClick("noi-bat")}
             className={`px-3 sm:px-6 py-2 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
               activeTab === "noi-bat"
-                ? "bg-sky-500 text-white"
-                : "text-white hover:bg-sky-500"
+                ? "bg-green-500 text-white"
+                : "text-white hover:bg-green-500"
             }`}
           >
             Nổi bật
@@ -121,8 +121,8 @@ export default function QuickCategories() {
             onClick={() => handleTabClick("cong-nghe")}
             className={`px-3 sm:px-6 py-2 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
               activeTab === "cong-nghe"
-                ? "bg-sky-500 text-white"
-                : "text-white hover:bg-sky-500"
+                ? "bg-green-500 text-white"
+                : "text-white hover:bg-green-500"
             }`}
           >
             Công nghệ
@@ -131,8 +131,8 @@ export default function QuickCategories() {
             onClick={() => handleTabClick("dien-tich")}
             className={`px-3 sm:px-6 py-2 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
               activeTab === "dien-tich"
-                ? "bg-sky-500 text-white"
-                : "text-white hover:bg-sky-500"
+                ? "bg-green-500 text-white"
+                : "text-white hover:bg-green-500"
             }`}
           >
             Diện tích
@@ -141,8 +141,8 @@ export default function QuickCategories() {
             onClick={() => handleTabClick("phu-kien")}
             className={`px-3 sm:px-6 py-2 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
               activeTab === "phu-kien"
-                ? "bg-sky-500 text-white"
-                : "text-white hover:bg-sky-500"
+                ? "bg-green-500 text-white"
+                : "text-white hover:bg-green-500"
             }`}
           >
             Phụ kiện
@@ -167,10 +167,10 @@ export default function QuickCategories() {
                 <button
                   key={cat.id}
                   onClick={() => handleTabClick("cong-nghe", cat.id)}
-                  className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-white hover:scale-105 sm:hover:scale-110 active:scale-95 transition-all duration-200 group p-3 sm:p-0 rounded-lg sm:rounded-none hover:bg-sky-500/20 sm:hover:bg-transparent cursor-pointer"
+                  className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-white hover:scale-105 sm:hover:scale-110 active:scale-95 transition-all duration-200 group p-3 sm:p-0 rounded-lg sm:rounded-none hover:bg-green-500/20 sm:hover:bg-transparent cursor-pointer"
                 >
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-full flex items-center justify-center group-hover:shadow-xl group-hover:bg-sky-50 transition-all shrink-0">
-                    <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 text-sky-500 group-hover:scale-110 transition-transform" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-full flex items-center justify-center group-hover:shadow-xl group-hover:bg-green-50 transition-all shrink-0">
+                    <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 text-green-500 group-hover:scale-110 transition-transform" />
                   </div>
                   <span className="text-xs sm:text-sm font-medium group-hover:underline text-center sm:text-left">{cat.name}</span>
                 </button>

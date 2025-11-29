@@ -63,7 +63,7 @@ export default function BrandLogos() {
     return (
       <div className="bg-white py-6">
         <div className="container mx-auto px-4">
-          <h2 className="text-xl font-bold mb-6 text-gray-900">Thương hiệu máy lọc không khí</h2>
+          <h2 className="text-xl font-bold mb-6 text-gray-900">Thương hiệu điện thoại</h2>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3 mb-6">
             {[...Array(9)].map((_, i) => (
               <div key={i} className="bg-gray-100 rounded-lg h-14 animate-pulse" />
@@ -79,21 +79,39 @@ export default function BrandLogos() {
   }
 
   return (
-    <div className="bg-white py-6">
+    <div className="bg-gradient-to-b from-gray-50 to-white py-8 md:py-12">
       <div className="container mx-auto px-4">
-        <h2 className="text-xl font-bold mb-6 text-gray-900">Thương hiệu máy lọc không khí</h2>
-        
-        {/* Brand Grid */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3 mb-6">
-          {brands.map((brand) => (
+        {/* Section Header */}
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+            Thương hiệu điện thoại
+          </h2>
+          <p className="text-gray-600 text-sm md:text-base">
+            Chọn thương hiệu yêu thích của bạn
+          </p>
+        </div>
+
+        {/* Brand Grid - Modern Card Design */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
+          {brands.map((brand, index) => (
             <button
               key={brand}
               onClick={() => handleBrandClick(brand)}
-              className="bg-white border border-gray-200 rounded-lg px-4 py-3 hover:border-sky-400 hover:shadow-lg hover:-translate-y-1 active:translate-y-0 transition-all duration-200 flex items-center justify-center text-center group cursor-pointer"
+              style={{ animationDelay: `${index * 0.05}s` }}
+              className="group relative bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-red-200 hover:-translate-y-2 active:translate-y-0 overflow-hidden animate-fade-in-up"
             >
-              <span className="font-semibold text-sm group-hover:text-sky-500 transition-colors text-gray-900">
-                {brand}
-              </span>
+              {/* Gradient overlay on hover */}
+              <div className="absolute inset-0 bg-gradient-to-br from-red-50 to-rose-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              {/* Brand Name */}
+              <div className="relative z-10">
+                <span className="font-bold text-base md:text-lg text-gray-900 group-hover:text-red-600 transition-colors duration-300 block">
+                  {brand}
+                </span>
+              </div>
+
+              {/* Decorative corner */}
+              <div className="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-red-100 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-bl-full" />
             </button>
           ))}
         </div>

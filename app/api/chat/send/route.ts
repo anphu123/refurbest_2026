@@ -24,9 +24,14 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (settingsError || !settings) {
+      console.error('AI settings error:', settingsError);
       return NextResponse.json(
-        { error: 'AI settings not found' },
-        { status: 404 }
+        { 
+          success: false,
+          error: 'AI chưa được cấu hình. Vui lòng liên hệ admin.',
+          shouldWaitForAgent: true 
+        },
+        { status: 200 }
       );
     }
 
@@ -156,9 +161,9 @@ export async function POST(request: NextRequest) {
     // 8. Call Gemini API
     const startTime = Date.now();
     const genAI = new GoogleGenerativeAI(settings.api_key);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-    const prompt = `${settings.default_prompt || 'Bạn là nhân viên tư vấn bán hàng của công ty máy lọc không khí. Hãy trả lời một cách thân thiện, chuyên nghiệp và hỗ trợ khách hàng.'}
+    const prompt = `${settings.default_prompt || 'Bạn là nhân viên tư vấn bán hàng của cửa hàng điện thoại. Hãy trả lời một cách thân thiện, chuyên nghiệp và hỗ trợ khách hàng.'}
 
 Khách hàng: ${message}
 
@@ -182,7 +187,7 @@ Hãy trả lời ngắn gọn, thân thiện và hữu ích.`;
         response: responseText,
         is_ai_response: true,
         is_agent_response: false,
-        model: 'gemini-2.0-flash-exp',
+        model: 'gemini-2.5-flash',
         latency_ms: latency,
       });
 
@@ -201,8 +206,12 @@ Hãy trả lời ngắn gọn, thân thiện và hữu ích.`;
   } catch (error: any) {
     console.error('Error in chat API:', error);
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
+      { 
+        success: false,
+        error: error.message || 'Đã xảy ra lỗi. Vui lòng thử lại sau.',
+        shouldWaitForAgent: true 
+      },
+      { status: 200 }
     );
   }
 }

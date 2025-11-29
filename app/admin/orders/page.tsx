@@ -10,7 +10,7 @@ import { useProvinces } from "@/lib/hooks/useProvinces";
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  processing: 'bg-blue-100 text-blue-800 border-blue-200',
+  processing: 'bg-green-100 text-blue-800 border-green-200',
   shipped: 'bg-purple-100 text-purple-800 border-purple-200',
   delivered: 'bg-green-100 text-green-800 border-green-200',
   cancelled: 'bg-red-100 text-red-800 border-red-200',
@@ -122,13 +122,14 @@ export default function AdminOrdersPage() {
           products (
             id,
             name,
-            image,
-            price
+            image
           )
         `)
         .eq("order_id", order.id);
 
       if (error) throw error;
+      
+      // Price is already in order_items table, no need to fetch from products
       setOrderItems(items as any || []);
     } catch (error) {
       console.error("Error fetching order details:", error);
@@ -158,7 +159,7 @@ export default function AdminOrdersPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
       </div>
     );
   }
@@ -181,7 +182,7 @@ export default function AdminOrdersPage() {
               placeholder="Tìm kiếm đơn hàng..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 transition-all"
+              className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 transition-all"
             />
           </div>
         </div>
@@ -196,8 +197,8 @@ export default function AdminOrdersPage() {
               whileTap={{ scale: 0.95 }}
               className={`px-4 py-2 rounded-lg font-medium transition-all text-sm ${
                 statusFilter === status
-                  ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg"
-                  : "bg-white border-2 border-gray-200 text-gray-700 hover:border-sky-300"
+                  ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg"
+                  : "bg-white border-2 border-gray-200 text-gray-700 hover:border-green-300"
               }`}
             >
               {status === "all" ? "Tất cả" : statusLabels[status]}
@@ -227,8 +228,8 @@ export default function AdminOrdersPage() {
                   ? "bg-yellow-500 text-white shadow-lg"
                   : payment.value === "failed"
                   ? "bg-red-500 text-white shadow-lg"
-                  : "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg"
-                : "bg-white border-2 border-gray-200 text-gray-700 hover:border-sky-300"
+                  : "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg"
+                : "bg-white border-2 border-gray-200 text-gray-700 hover:border-green-300"
             }`}
           >
             {payment.label}
@@ -299,7 +300,7 @@ export default function AdminOrdersPage() {
                       <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${
                         order.payment_method === 'cod' 
                           ? 'bg-orange-100 text-orange-800 border border-orange-200' 
-                          : 'bg-blue-100 text-blue-800 border border-blue-200'
+                          : 'bg-green-100 text-blue-800 border border-green-200'
                       }`}>
                         {order.payment_method === 'cod' ? 'COD' : 'Chuyển khoản'}
                       </span>
@@ -337,7 +338,7 @@ export default function AdminOrdersPage() {
                         onClick={() => fetchOrderDetails(order)}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer"
+                        className="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors cursor-pointer"
                         title="Xem chi tiết đơn hàng"
                       >
                         <Eye className="w-4 h-4" />
@@ -416,9 +417,9 @@ export default function AdminOrdersPage() {
                 </div>
 
                 {/* Payment Information */}
-                <div className="bg-gradient-to-br from-blue-50 to-sky-50 rounded-xl p-6 border-2 border-blue-100">
+                <div className="bg-gradient-to-br from-green-50 to-green-50 rounded-xl p-6 border-2 border-green-100">
                   <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-blue-600" />
+                    <CreditCard className="w-5 h-5 text-green-600" />
                     Thông tin thanh toán
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -427,7 +428,7 @@ export default function AdminOrdersPage() {
                       <span className={`inline-flex px-4 py-2 rounded-lg text-sm font-semibold ${
                         selectedOrder.payment_method === 'cod' 
                           ? 'bg-orange-100 text-orange-800 border-2 border-orange-200' 
-                          : 'bg-blue-100 text-blue-800 border-2 border-blue-200'
+                          : 'bg-green-100 text-blue-800 border-2 border-green-200'
                       }`}>
                         {selectedOrder.payment_method === 'cod' ? 'Thanh toán khi nhận hàng (COD)' : 'Chuyển khoản ngân hàng'}
                       </span>
@@ -448,7 +449,7 @@ export default function AdminOrdersPage() {
                     </div>
                   </div>
                   {selectedOrder.transaction_id && (
-                    <div className="mt-4 pt-4 border-t border-blue-200">
+                    <div className="mt-4 pt-4 border-t border-green-200">
                       <p className="text-sm text-gray-600">Mã giao dịch</p>
                       <p className="font-mono text-sm font-semibold text-gray-900 mt-1">{selectedOrder.transaction_id}</p>
                     </div>
@@ -463,8 +464,8 @@ export default function AdminOrdersPage() {
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Package className="w-5 h-5 text-blue-600" />
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <Package className="w-5 h-5 text-green-600" />
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Họ và tên</p>
@@ -498,8 +499,7 @@ export default function AdminOrdersPage() {
                       <div>
                         <p className="text-sm text-gray-600">Phương thức thanh toán</p>
                         <p className="font-semibold text-gray-900">
-                          {selectedOrder.payment_method === 'cod' ? 'Thanh toán khi nhận hàng' : 
-                           selectedOrder.payment_method === 'sepay' ? 'Sepay' : selectedOrder.payment_method}
+                          {selectedOrder.payment_method === 'cod' ? 'Thanh toán khi nhận hàng (COD)' : selectedOrder.payment_method}
                         </p>
                       </div>
                     </div>
@@ -507,7 +507,7 @@ export default function AdminOrdersPage() {
                 </div>
 
                 {/* Delivery Address */}
-                <div className="bg-sky-50 rounded-xl p-6">
+                <div className="bg-green-50 rounded-xl p-6">
                   <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <MapPin className="w-5 h-5" />
                     Địa chỉ giao hàng
@@ -516,7 +516,7 @@ export default function AdminOrdersPage() {
                     {selectedOrder.address}, {getWardName(selectedOrder.ward)}, {getDistrictName(selectedOrder.district)}, {getCityName(selectedOrder.city)}
                   </p>
                   {selectedOrder.note && (
-                    <div className="mt-3 pt-3 border-t border-sky-200">
+                    <div className="mt-3 pt-3 border-t border-green-200">
                       <p className="text-sm text-gray-600">Ghi chú:</p>
                       <p className="text-gray-900">{selectedOrder.note}</p>
                     </div>
@@ -528,7 +528,7 @@ export default function AdminOrdersPage() {
                   <h3 className="text-lg font-bold text-gray-900 mb-4">Sản phẩm đã đặt</h3>
                   {loadingOrderDetails ? (
                     <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
                     </div>
                   ) : orderItems.length === 0 ? (
                     <p className="text-gray-500 text-center py-8">Không có sản phẩm</p>
@@ -589,7 +589,7 @@ export default function AdminOrdersPage() {
                     )}
                     <div className="pt-3 border-t border-gray-300 flex justify-between">
                       <span className="text-lg font-bold text-gray-900">Thành tiền:</span>
-                      <span className="text-lg font-bold text-sky-600">{new Intl.NumberFormat('vi-VN').format(selectedOrder.final_amount)}đ</span>
+                      <span className="text-lg font-bold text-green-600">{new Intl.NumberFormat('vi-VN').format(selectedOrder.final_amount)}đ</span>
                     </div>
                   </div>
                 </div>

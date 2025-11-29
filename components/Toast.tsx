@@ -35,7 +35,7 @@ export default function Toast({ message, type = "success", duration = 3000, onCl
       case "error":
         return <X className="w-5 h-5 text-red-500" />;
       default:
-        return <CheckCircle className="w-5 h-5 text-blue-500" />;
+        return <CheckCircle className="w-5 h-5 text-green-500" />;
     }
   };
 
@@ -46,7 +46,7 @@ export default function Toast({ message, type = "success", duration = 3000, onCl
       case "error":
         return "bg-red-50 border-red-200";
       default:
-        return "bg-blue-50 border-blue-200";
+        return "bg-green-50 border-green-200";
     }
   };
 

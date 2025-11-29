@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Botchat from "@/components/Botchat";
 import { createClient } from "@/lib/supabase/client";
 import { ArrowLeft, Calendar, User, Eye, Clock, Star, TrendingUp, ShoppingCart } from "lucide-react";
 import Image from "next/image";
@@ -131,6 +132,7 @@ export default function NewsDetailPage() {
           </div>
         </div>
         <Footer />
+      <Botchat />
       </div>
     );
   }
@@ -143,12 +145,13 @@ export default function NewsDetailPage() {
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">Không tìm thấy tin tức</h1>
             <p className="text-gray-600 mb-6">Tin tức bạn đang tìm không tồn tại hoặc đã bị xóa.</p>
-            <Button onClick={() => router.push('/news')} className="bg-sky-500 hover:bg-sky-600 text-white">
+            <Button onClick={() => router.push('/news')} className="bg-green-500 hover:bg-green-600 text-white">
               Xem tất cả tin tức
             </Button>
           </div>
         </div>
         <Footer />
+      <Botchat />
       </div>
     );
   }
@@ -171,7 +174,7 @@ export default function NewsDetailPage() {
                   className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm"
                 >
                   <div className="flex items-center gap-2 mb-4">
-                    <TrendingUp className="w-5 h-5 text-sky-600" />
+                    <TrendingUp className="w-5 h-5 text-green-600" />
                     <h3 className="text-lg font-bold text-gray-900">Sản phẩm nổi bật</h3>
                   </div>
                   <div className="space-y-4">
@@ -192,11 +195,11 @@ export default function NewsDetailPage() {
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold text-sm text-gray-900 line-clamp-2 group-hover:text-sky-600 transition-colors">
+                            <h4 className="font-semibold text-sm text-gray-900 line-clamp-2 group-hover:text-green-600 transition-colors">
                               {product.name}
                             </h4>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-sky-600 font-bold text-sm">
+                              <span className="text-green-600 font-bold text-sm">
                                 {new Intl.NumberFormat('vi-VN').format(product.price)}đ
                               </span>
                               {product.original_price && product.original_price > product.price && (
@@ -221,7 +224,7 @@ export default function NewsDetailPage() {
                   </div>
                   <Link
                     href="/products"
-                    className="block mt-4 text-center text-sm text-sky-600 hover:text-sky-700 font-medium"
+                    className="block mt-4 text-center text-sm text-green-600 hover:text-green-700 font-medium"
                   >
                     Xem tất cả sản phẩm →
                   </Link>
@@ -240,7 +243,7 @@ export default function NewsDetailPage() {
                   <h3 className="font-bold text-lg">Mua sắm ngay</h3>
                 </div>
                 <p className="text-sm text-green-100 mb-4">
-                  Khám phá bộ sưu tập máy lọc không khí chất lượng cao
+                  Khám phá bộ sưu tập điện thoại chất lượng cao
                 </p>
                 <Link href="/products">
                   <Button className="w-full bg-white text-green-600 hover:bg-green-50 font-semibold">
@@ -261,7 +264,7 @@ export default function NewsDetailPage() {
               <Button
                 variant="ghost"
                 onClick={() => router.back()}
-                className="flex items-center gap-2 text-gray-600 hover:text-sky-600"
+                className="flex items-center gap-2 text-gray-600 hover:text-green-600"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Quay lại
@@ -431,7 +434,7 @@ export default function NewsDetailPage() {
                 className="lg:hidden mt-12 border-t border-gray-200 pt-8"
               >
                 <div className="flex items-center gap-2 mb-6">
-                  <TrendingUp className="w-5 h-5 text-sky-600" />
+                  <TrendingUp className="w-5 h-5 text-green-600" />
                   <h2 className="text-2xl font-bold text-gray-900">Sản phẩm nổi bật</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -450,11 +453,11 @@ export default function NewsDetailPage() {
                           className="object-cover group-hover:scale-110 transition-transform"
                         />
                       </div>
-                      <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2 group-hover:text-sky-600 transition-colors">
+                      <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2 group-hover:text-green-600 transition-colors">
                         {product.name}
                       </h3>
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sky-600 font-bold text-lg">
+                        <span className="text-green-600 font-bold text-lg">
                           {new Intl.NumberFormat('vi-VN').format(product.price)}đ
                         </span>
                         {product.original_price && product.original_price > product.price && (
@@ -477,7 +480,7 @@ export default function NewsDetailPage() {
                 </div>
                 <Link
                   href="/products"
-                  className="block mt-6 text-center text-sky-600 hover:text-sky-700 font-semibold"
+                  className="block mt-6 text-center text-green-600 hover:text-green-700 font-semibold"
                 >
                   Xem tất cả sản phẩm →
                 </Link>
@@ -517,7 +520,7 @@ export default function NewsDetailPage() {
                             </div>
                           )}
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold text-sm text-gray-900 line-clamp-2 group-hover:text-sky-600 transition-colors mb-1">
+                            <h4 className="font-semibold text-sm text-gray-900 line-clamp-2 group-hover:text-green-600 transition-colors mb-1">
                               {item.title}
                             </h4>
                             <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -539,6 +542,7 @@ export default function NewsDetailPage() {
       </article>
 
       <Footer />
+      <Botchat />
     </div>
   );
 }

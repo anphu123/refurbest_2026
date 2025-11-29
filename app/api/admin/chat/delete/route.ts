@@ -5,18 +5,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 // Helper to check if user is admin
-async function isAdmin(userId: string): Promise<boolean> {
-  const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  });
-
-  const { data } = await supabase
-    .rpc('is_admin', { user_id: userId });
-
-  return data === true;
+async function isAdmin(userEmail: string): Promise<boolean> {
+  return userEmail === 'admin@refurbest.vn';
 }
 
 export async function POST(request: NextRequest) {
@@ -47,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user is admin
-    const adminCheck = await isAdmin(user.id);
+    const adminCheck = await isAdmin(user.email || '');
     if (!adminCheck) {
       return NextResponse.json(
         { error: 'Forbidden - Admin access required' },

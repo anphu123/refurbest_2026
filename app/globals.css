@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --background: #f0f9ff;
-  --foreground: #0c4a6e;
+  --background: #f0fdf4;
+  --foreground: #14532d;
 }
 
  
@@ -28,7 +28,7 @@ html {
 
 @layer base {
   * {
-    @apply border-blue-200;
+    @apply border-green-200;
   }
 }
 
@@ -47,17 +47,17 @@ html {
     display: none;
   }
   
-  /* Professional gradient backgrounds - Blue theme */
+  /* Professional gradient backgrounds - Green theme */
   .gradient-primary {
-    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
   }
-  
+
   .gradient-secondary {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
   }
-  
+
   .gradient-accent {
-    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
   }
   
   /* Glass morphism effect */
@@ -71,43 +71,43 @@ html {
   .shimmer {
     background: linear-gradient(
       90deg,
-      #f0f9ff 0px,
-      #e0f2fe 40px,
-      #f0f9ff 80px
+      #f0fdf4 0px,
+      #dcfce7 40px,
+      #f0fdf4 80px
     );
     background-size: 1000px 100%;
     animation: shimmer 2s infinite linear;
   }
 }
 
-/* Custom scrollbar - Blue theme */
+/* Custom scrollbar - Green theme */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f0f9ff;
+  background: #f0fdf4;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 100%);
+  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
   border-radius: 5px;
-  border: 2px solid #f0f9ff;
+  border: 2px solid #f0fdf4;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #0369a1 0%, #0c4a6e 100%);
+  background: linear-gradient(180deg, #15803d 0%, #14532d 100%);
 }
 
 /* Selection styling */
 ::selection {
-  background-color: #0ea5e9;
+  background-color: #22c55e;
   color: white;
 }
 
 ::-moz-selection {
-  background-color: #0ea5e9;
+  background-color: #22c55e;
   color: white;
 }
 
@@ -207,6 +207,23 @@ img {
   @keyframes blink {
     0%, 50% { opacity: 1; }
     51%, 100% { opacity: 0; }
+  }
+
+  /* Fade in up animation */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 

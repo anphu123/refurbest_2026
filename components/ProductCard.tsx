@@ -2,7 +2,7 @@
 
 import { Product } from "@/types";
 import { formatPrice } from "@/lib/utils";
-import { ShoppingCart, Star, Heart, Eye, Wind, Battery, Zap, Flame, Sparkles, Tag, Truck } from "lucide-react";
+import { ShoppingCart, Star, Heart, Eye, Flame, Sparkles, Tag, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -24,9 +24,25 @@ export default function ProductCard({ product, index, compact = false }: Product
   const [showToast, setShowToast] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const { addItem } = useCartStore();
-  const discountPercent = product.discount || 0;
-  const originalPriceValue = (product as any).originalPrice ?? (product as any).original_price;
-  const hasDiscount = discountPercent > 0 || (originalPriceValue && originalPriceValue > product.price);
+  const variantPrices = Array.isArray(product.variants)
+    ? (product.variants as any[])
+        .map((v) => Number((v as any).price))
+        .filter((n) => Number.isFinite(n) && n > 0)
+    : [];
+  const variantOriginalPrices = Array.isArray(product.variants)
+    ? (product.variants as any[])
+        .map((v) => Number((v as any).original_price))
+        .filter((n) => Number.isFinite(n) && n > 0)
+    : [];
+  const minVariantPrice = variantPrices.length ? Math.min(...variantPrices) : undefined;
+  const maxVariantPrice = variantPrices.length ? Math.max(...variantPrices) : undefined;
+  const minOriginalPrice = variantOriginalPrices.length ? Math.min(...variantOriginalPrices) : undefined;
+  const basePrice = Number((product as any).price);
+  const priceMin = Number.isFinite(minVariantPrice) ? (minVariantPrice as number) : (Number.isFinite(basePrice) ? basePrice : undefined);
+  const priceMax = Number.isFinite(maxVariantPrice) ? (maxVariantPrice as number) : (Number.isFinite(basePrice) ? basePrice : undefined);
+  const originalPriceValue = minOriginalPrice || (product as any).originalPrice || (product as any).original_price;
+  const hasDiscount = originalPriceValue && priceMin && originalPriceValue > priceMin;
+  const discountPercent = hasDiscount ? Math.round(((originalPriceValue - priceMin) / originalPriceValue) * 100) : 0;
 
   // Load wishlist from localStorage on mount
   useEffect(() => {
@@ -95,95 +111,99 @@ export default function ProductCard({ product, index, compact = false }: Product
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.02, duration: 0.3 }}
-          className="group relative bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-sky-400 hover:shadow-lg transition-all duration-200 cursor-pointer"
-        > 
-        {/* Badges */}
-        <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
-          {product.badge === 'hot' && (
-            <span className="bg-orange-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">HOT</span>
-          )}
-          {hasDiscount && (
-            <span className="bg-yellow-400 text-gray-900 text-[10px] font-bold px-2 py-0.5 rounded">-{discountPercent}%</span>
-          )}
-        </div>
-
-        {/* Image */}
-        <div className="relative aspect-square bg-gray-50">
-          {!imageLoaded && <div className="absolute inset-0 shimmer" />}
-          <Image
-            src={product.image}
-            alt={product.name}
-            fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-            className={`object-cover group-hover:scale-105 transition-transform duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-            onLoad={() => setImageLoaded(true)}
-          />
-        </div>
-
-        {/* Content - Compact */}
-        <div className="p-3 relative z-10">
-          {/* Name */}
-          <h3 className="text-sm font-medium line-clamp-2 h-10 text-gray-900 mb-3 group-hover:text-sky-500 transition-colors">
-            {product.name}
-          </h3>
-
-          {/* Specs - Air Purifier Style */}
-          <div className="mb-3 space-y-1.5">
-            <div className="flex items-center gap-2 text-xs text-gray-600">
-              <span className="w-5 h-5 flex items-center justify-center bg-gray-100 rounded">
-                <Wind className="w-3 h-3" />
-              </span>
-              <span>CADR 300 m³/h</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-gray-600">
-              <span className="w-5 h-5 flex items-center justify-center bg-gray-100 rounded">
-                <Battery className="w-3 h-3" />
-              </span>
-              <span>HEPA H13</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-gray-600">
-              <span className="w-5 h-5 flex items-center justify-center bg-gray-100 rounded">
-                <Zap className="w-3 h-3" />
-              </span>
-              <span>Lọc 99.97% bụi mịn</span>
-            </div>
-          </div>
-
-          {/* Price */}
-          <div className="mb-2">
-            <div className="text-sky-500 font-bold text-lg">
-              {formatPrice(product.price)}
-            </div>
-            {hasDiscount && originalPriceValue && (
-              <div className="flex items-center gap-2">
-                <div className="text-gray-400 text-xs line-through">
-                  {formatPrice(originalPriceValue)}
-                </div>
-                <div className="text-[10px] bg-sky-50 text-sky-500 px-1.5 py-0.5 rounded">
-                  Trả góp 0%
-                </div>
-              </div>
+          className="group relative bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-green-400 hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col h-full"
+        >
+          {/* Badges */}
+          <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
+            {product.badge === 'hot' && (
+              <span className="bg-orange-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">HOT</span>
             )}
+            {product.badge === 'bestseller' ? (
+              <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">Bán chạy</span>
+            ) : hasDiscount && discountPercent > 0 ? (
+              <span className="bg-yellow-400 text-gray-900 text-[10px] font-bold px-2 py-0.5 rounded">-{discountPercent}%</span>
+            ) : null}
           </div>
 
-          {/* Rating - Compact */}
-          {product.rating && (
-            <div className="flex items-center gap-1 text-xs text-gray-600 mb-3">
-              <span className="text-yellow-500">★</span>
-              <span>{product.rating}</span>
-              {product.reviews && <span className="text-gray-400">({product.reviews})</span>}
-            </div>
-          )}
+          {/* Image */}
+          <div className="relative aspect-square bg-gray-50 flex-shrink-0">
+            {!imageLoaded && <div className="absolute inset-0 shimmer" />}
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+              className={`object-cover group-hover:scale-105 transition-transform duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              onLoad={() => setImageLoaded(true)}
+              onError={(e) => {
+                // Fallback to placeholder if image fails to load
+                e.currentTarget.src = '/placeholder-product.png';
+                setImageLoaded(true);
+              }}
+            />
+          </div>
 
-          {/* Add to Cart Button */}
-          <motion.button
+          {/* Content - Compact */}
+          <div className="p-3 relative z-10 flex flex-col flex-grow">
+            {/* Main content area */}
+            <div className="flex-grow">
+              {/* Name */}
+              <h3 className="text-sm font-medium line-clamp-2 h-10 text-gray-900 mb-3 group-hover:text-green-500 transition-colors">
+                {product.name}
+              </h3>
+
+              {/* Specs (optional, from DB) */}
+              {product.specifications && Array.isArray(product.specifications) && product.specifications.length > 0 && (
+                <div className="mb-3 space-y-1.5">
+                  {product.specifications.slice(0, 3).map((spec: any, index: number) => (
+                    <div key={`${product.id}-spec-${index}`} className="flex items-center gap-2 text-xs text-gray-600">
+                      <span className="w-5 h-5 flex items-center justify-center bg-gray-100 rounded">
+                        <Sparkles className="w-3 h-3" />
+                      </span>
+                      <span>{spec.key}: {String(spec.value)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Price */}
+              <div className="mb-2">
+                <div className="text-green-500 font-bold text-lg">
+                  {priceMin && priceMax && priceMax > priceMin
+                    ? `${formatPrice(priceMin)} – ${formatPrice(priceMax)}`
+                    : priceMin
+                      ? formatPrice(priceMin)
+                      : 'Liên hệ'}
+                </div>
+                {hasDiscount && originalPriceValue && priceMin && (
+                  <div className="flex items-center gap-2">
+                    <div className="text-gray-400 text-xs line-through">
+                      {formatPrice(originalPriceValue)}
+                    </div>
+
+                  </div>
+                )}
+              </div>
+
+              {/* Rating - Compact */}
+              {product.rating && (
+                <div className="flex items-center gap-1 text-xs text-gray-600 mb-3">
+                  <span className="text-yellow-500">★</span>
+                  <span>{product.rating}</span>
+                  {product.reviews && <span className="text-gray-400">({product.reviews})</span>}
+                </div>
+              )}
+            </div>
+
+            {/* Add to Cart Button (at the bottom) */}
+            <motion.button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               handleAddToCart(e);
             }}
             disabled={isAddingToCart}
-            className="relative z-10 w-full bg-sky-500 hover:bg-sky-600 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="relative z-10 w-full bg-green-500 hover:bg-green-600 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -221,186 +241,202 @@ export default function ProductCard({ product, index, compact = false }: Product
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.03, duration: 0.4 }}
-        className="group relative bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-large transition-all duration-300 border border-gray-100/50 card-hover cursor-pointer"
+        className="group relative bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-large transition-all duration-300 border border-gray-100/50 card-hover cursor-pointer flex flex-col h-full"
       >
-      {/* Quick Actions - shown on hover */}
-      <div className="absolute top-3 right-3 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <motion.button
-          onClick={handleWishlist}
-          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md ${
-            isWishlisted 
-              ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white' 
-              : 'bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-orange-50'
-          }`}
-          whileHover={{ scale: 1.15, rotate: isWishlisted ? 0 : 10, transition: { duration: 0.15 } }}
-          whileTap={{ scale: 0.85, transition: { duration: 0.1 } }}
-          animate={isWishlisted ? { scale: [1, 1.2, 1] } : {}}
-          transition={{ duration: 0.3 }}
-        >
-          <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
-        </motion.button>
-        <motion.button 
-          className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-700 hover:bg-sky-50 hover:text-sky-600 transition-all shadow-md"
-          whileHover={{ scale: 1.15, transition: { duration: 0.15 } }}
-          whileTap={{ scale: 0.85, transition: { duration: 0.1 } }}
-        >
-          <Eye className="w-5 h-5" />
-        </motion.button>
-      </div>
-
-      {/* Badge */}
-      {product.badge && (
-        <div className="absolute top-3 left-3 z-10">
-          {product.badge === 'hot' && (
-            <Badge variant="hot" className="text-xs font-bold px-3 py-1.5 flex items-center gap-1">
-              <Flame className="w-3 h-3" /> HOT
-            </Badge>
-          )}
-          {product.badge === 'new' && (
-            <Badge variant="new" className="text-xs font-bold px-3 py-1.5 flex items-center gap-1">
-              <Sparkles className="w-3 h-3" /> MỚI
-            </Badge>
-          )}
-          {product.badge === 'sale' && (
-            <Badge variant="sale" className="text-xs font-bold px-3 py-1.5 flex items-center gap-1">
-              <Tag className="w-3 h-3" /> SALE
-            </Badge>
-          )}
-        </div>
-      )}
-
-      {/* Discount Badge */}
-      {hasDiscount && (
-        <div className="absolute top-3 right-3 z-10 bg-gradient-to-br from-yellow-400 to-orange-500 text-gray-900 text-sm font-bold px-3 py-1.5 rounded-full shadow-lg">
-          -{discountPercent}%
-        </div>
-      )}
-
-      {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
-        {!imageLoaded && (
-          <div className="absolute inset-0 shimmer" />
-        )}
-        <Image
-          src={product.image}
-          alt={product.name}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className={`object-cover group-hover:scale-105 transition-transform duration-500 ${
-            imageLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
-          onLoad={() => setImageLoaded(true)}
-        />
-      </div>
-
-      {/* Content */}
-      <div className="p-5">
-        {/* Brand */}
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            {product.brand}
-          </span>
-          {product.stock < 10 && (
-            <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
-              Sắp hết
-            </span>
-          )}
-        </div>
-
-        {/* Name */}
-        <h3 className="font-semibold text-sm mb-3 line-clamp-2 h-10 text-gray-900 group-hover:text-sky-500 transition-colors leading-tight">
-          {product.name}
-        </h3>
-
-        {/* Rating */}
-        {product.rating && (
-          <div className="flex items-center gap-2 mb-3">
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-3.5 h-3.5 ${
-                    i < Math.floor(product.rating!)
-                      ? 'fill-yellow-400 text-yellow-400'
-                      : 'fill-gray-200 text-gray-200'
-                  }`}
-                />
-              ))}
-            </div>
-            <span className="text-xs font-semibold text-gray-700">
-              {product.rating}
-            </span>
-            {product.reviews && (
-              <span className="text-xs text-gray-400">
-                ({product.reviews.toLocaleString()})
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Price */}
-        <div className="mb-4">
-          <div className="flex items-baseline gap-2 mb-1">
-            <span className="text-sky-500 font-bold text-xl">
-              {formatPrice(product.price)}
-            </span>
-          </div>
-          {hasDiscount && originalPriceValue && (
-            <div className="flex items-center gap-2">
-              <span className="text-gray-400 text-sm line-through">
-                {formatPrice(originalPriceValue)}
-              </span>
-              <span className="text-xs font-semibold text-sky-500 bg-sky-50 px-2 py-0.5 rounded-full">
-                Tiết kiệm {formatPrice(originalPriceValue - product.price)}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Add to cart button */}
-        <motion.div
-          whileHover={{ scale: 1.02, transition: { duration: 0.15 } }}
-          whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
-          className="relative z-10"
-        >
-          <Button 
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleAddToCart(e);
-            }}
-            disabled={isAddingToCart}
-            className="w-full group-hover:shadow-xl-colored bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            size="lg"
+        {/* Quick Actions - shown on hover */}
+        <div className="absolute top-3 right-3 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <motion.button
+            onClick={handleWishlist}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md ${
+              isWishlisted
+                ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
+                : 'bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-orange-50'
+            }`}
+            whileHover={{ scale: 1.15, rotate: isWishlisted ? 0 : 10, transition: { duration: 0.15 } }}
+            whileTap={{ scale: 0.85, transition: { duration: 0.1 } }}
+            animate={isWishlisted ? { scale: [1, 1.2, 1] } : {}}
+            transition={{ duration: 0.3 }}
           >
-            {isAddingToCart ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Đang thêm...</span>
-              </>
-            ) : (
-              <>
-                <motion.div
-                  animate={{ rotate: [0, -10, 10, -10, 10, 0] }}
-                  transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 3 }}
-                >
-                  <ShoppingCart className="w-4 h-4" />
-                </motion.div>
-                <span>Thêm vào giỏ</span>
-              </>
-            )}
-          </Button>
-        </motion.div>
+            <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
+          </motion.button>
+          <motion.button
+            className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-700 hover:bg-green-50 hover:text-green-600 transition-all shadow-md"
+            whileHover={{ scale: 1.15, transition: { duration: 0.15 } }}
+            whileTap={{ scale: 0.85, transition: { duration: 0.1 } }}
+          >
+            <Eye className="w-5 h-5" />
+          </motion.button>
+        </div>
 
-        {/* Free shipping badge */}
-        {product.price >= 300000 && (
-          <div className="mt-3 text-center">
-            <span className="text-xs font-medium text-sky-500 bg-sky-50 px-3 py-1.5 rounded-full inline-flex items-center gap-1">
-              <Truck className="w-3 h-3" /> Miễn phí vận chuyển
-            </span>
+        {/* Badge */}
+        {product.badge && (
+          <div className="absolute top-3 left-3 z-10">
+            {product.badge === 'hot' && (
+              <Badge variant="hot" className="text-xs font-bold px-3 py-1.5 flex items-center gap-1">
+                <Flame className="w-3 h-3" /> HOT
+              </Badge>
+            )}
+            {product.badge === 'new' && (
+              <Badge variant="new" className="text-xs font-bold px-3 py-1.5 flex items-center gap-1">
+                <Sparkles className="w-3 h-3" /> MỚI
+              </Badge>
+            )}
+            {product.badge === 'sale' && (
+              <Badge variant="sale" className="text-xs font-bold px-3 py-1.5 flex items-center gap-1">
+                <Tag className="w-3 h-3" /> SALE
+              </Badge>
+            )}
           </div>
         )}
-      </div>
+
+        {/* Discount Badge - Móc góc */}
+        {hasDiscount && discountPercent > 0 && (
+          <div className="absolute top-0 right-0 z-10">
+            <div className="relative">
+              <div className="bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-bl-lg rounded-tr-lg shadow-lg">
+                -{discountPercent}%
+              </div>
+              {/* Triangle decoration */}
+              <div className="absolute -bottom-1 right-0 w-0 h-0 border-l-[6px] border-l-transparent border-t-[6px] border-t-red-800"></div>
+            </div>
+          </div>
+        )}
+
+        {/* Image Container */}
+        <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 flex-shrink-0">
+          {!imageLoaded && (
+            <div className="absolute inset-0 shimmer" />
+          )}
+          <Image
+            src={product.image}
+            alt={product.name}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className={`object-cover group-hover:scale-105 transition-transform duration-500 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+            onLoad={() => setImageLoaded(true)}
+            onError={(e) => {
+              e.currentTarget.src = '/placeholder-product.png';
+              setImageLoaded(true);
+            }}
+          />
+        </div>
+
+        {/* Content */}
+        <div className="p-5 flex flex-col flex-grow">
+          <div className="flex-grow">
+            {/* Brand */}
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                {product.brand}
+              </span>
+              {typeof product.stock === 'number' && product.stock > 0 && product.stock < 10 && (
+                <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
+                  Sắp hết
+                </span>
+              )}
+            </div>
+
+            {/* Name */}
+            <h3 className="font-semibold text-sm mb-3 line-clamp-2 h-10 text-gray-900 group-hover:text-green-500 transition-colors leading-tight">
+              {product.name}
+            </h3>
+
+            {/* Rating */}
+            {product.rating && (
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-3.5 h-3.5 ${
+                        i < Math.floor(product.rating!)
+                          ? 'fill-yellow-400 text-yellow-400'
+                          : 'fill-gray-200 text-gray-200'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-xs font-semibold text-gray-700">
+                  {product.rating}
+                </span>
+                {product.reviews && (
+                  <span className="text-xs text-gray-400">
+                    ({product.reviews.toLocaleString()})
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Price */}
+            <div className="mb-4">
+              <div className="flex items-baseline gap-2 mb-1">
+                <span className="text-green-500 font-bold text-xl">
+                  {priceMin && priceMax && priceMax > priceMin
+                    ? `${formatPrice(priceMin)} – ${formatPrice(priceMax)}`
+                    : priceMin
+                      ? formatPrice(priceMin)
+                      : 'Liên hệ'}
+                </span>
+              </div>
+              {hasDiscount && originalPriceValue && (
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-400 text-sm line-through">
+                    {formatPrice(originalPriceValue)}
+                  </span>
+                  <span className="text-xs font-semibold text-green-500 bg-green-50 px-2 py-0.5 rounded-full">
+                    Tiết kiệm {priceMin ? formatPrice(originalPriceValue - priceMin) : formatPrice(0)}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Add to cart button */}
+          <motion.div
+            whileHover={{ scale: 1.02, transition: { duration: 0.15 } }}
+            whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
+            className="relative z-10"
+          >
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleAddToCart(e);
+              }}
+              disabled={isAddingToCart}
+              className="w-full group-hover:shadow-xl-colored bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              size="lg"
+            >
+              {isAddingToCart ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Đang thêm...</span>
+                </>
+              ) : (
+                <>
+                  <motion.div
+                    animate={{ rotate: [0, -10, 10, -10, 10, 0] }}
+                    transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 3 }}
+                  >
+                    <ShoppingCart className="w-4 h-4" />
+                  </motion.div>
+                  <span>Thêm vào giỏ</span>
+                </>
+              )}
+            </Button>
+          </motion.div>
+
+          {/* Free shipping badge */}
+          {(priceMin ?? 0) >= 300000 && (
+            <div className="mt-3 text-center">
+              <span className="text-xs font-medium text-green-500 bg-green-50 px-3 py-1.5 rounded-full inline-flex items-center gap-1">
+                <Truck className="w-3 h-3" /> Miễn phí vận chuyển
+              </span>
+            </div>
+          )}
+        </div>
       
         {/* Toast */}
         {showToast && (

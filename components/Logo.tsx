@@ -11,15 +11,15 @@ export default function Logo({ variant = 'horizontal', className = "" }: LogoPro
   const getLogoSrc = () => {
     switch (variant) {
       case 'horizontal':
-        return '/font/logo%20web%20ngang.svg';
+        return '/Refurbest.png';
       case 'white':
-        return '/font/Ch%E1%BB%AF%20tr%E1%BA%AFng%20R.svg';
+        return '/Refurbest.png';
       case 'blue':
-        return '/font/Ch%E1%BB%AF%20xanh%20R.svg';
+        return '/Refurbest.png';
       case 'black':
-        return '/font/Ch%E1%BB%AF%20%C4%91en%20R.svg';
+        return '/Refurbest.png';
       default:
-        return '/font/logo%20web%20ngang.svg';
+        return '/Refurbest.png';
     }
   };
 
@@ -27,7 +27,7 @@ export default function Logo({ variant = 'horizontal', className = "" }: LogoPro
     <div className={`relative ${className}`}>
       <Image
         src={getLogoSrc()}
-        alt="Hơi Thở Xanh Logo"
+        alt="Refurbest Logo"
         width={200}
         height={60}
         className="h-auto w-auto max-w-full"

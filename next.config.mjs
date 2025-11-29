@@ -7,6 +7,8 @@ const nextConfig = {
         hostname: '**',
       },
     ],
+    // Bỏ tối ưu ảnh của Next ở môi trường dev để tránh lỗi 404 từ _next/image
+    unoptimized: process.env.NODE_ENV === 'development',
   },
 };
 

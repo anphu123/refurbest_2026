@@ -360,14 +360,14 @@ export default function CustomerServicePage() {
                   placeholder="Tìm khách hàng..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
             </div>
             <div className="overflow-y-auto max-h-[calc(100vh-250px)]">
               {loading ? (
                 <div className="p-8 text-center text-gray-500">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500 mx-auto mb-2"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto mb-2"></div>
                   Đang tải...
                 </div>
               ) : filteredUsers.length === 0 ? (
@@ -381,7 +381,7 @@ export default function CustomerServicePage() {
                     key={u.id}
                     onClick={() => setSelectedUserId(u.id)}
                     className={`w-full p-4 text-left border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                      selectedUserId === u.id ? 'bg-sky-50 border-l-4 border-l-sky-500' : ''
+                      selectedUserId === u.id ? 'bg-green-50 border-l-4 border-l-green-500' : ''
                     }`}
                     whileHover={{ x: 2 }}
                   >
@@ -419,7 +419,7 @@ export default function CustomerServicePage() {
             {selectedUserId ? (
               <>
                 {/* Chat Header */}
-                <div className="p-4 border-b border-gray-200 bg-sky-50">
+                <div className="p-4 border-b border-gray-200 bg-green-50">
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="font-semibold text-gray-900">{selectedUser?.name || selectedUser?.email}</h2>
@@ -559,11 +559,11 @@ export default function CustomerServicePage() {
                             className={`max-w-[70%] rounded-lg p-3 ${
                               msg.is_from_user
                                 ? 'bg-white border border-gray-200 rounded-tl-none'
-                                : 'bg-sky-500 text-white rounded-tr-none'
+                                : 'bg-green-500 text-white rounded-tr-none'
                             }`}
                           >
                             <p className="text-sm whitespace-pre-wrap break-words">{msg.message}</p>
-                            <p className={`text-xs mt-1 ${msg.is_from_user ? 'text-gray-500' : 'text-sky-100'}`}>
+                            <p className={`text-xs mt-1 ${msg.is_from_user ? 'text-gray-500' : 'text-green-100'}`}>
                               {new Date(msg.created_at).toLocaleString('vi-VN')}
                             </p>
                           </div>
@@ -588,12 +588,12 @@ export default function CustomerServicePage() {
                       }}
                       placeholder="Nhập tin nhắn trả lời..."
                       disabled={sending}
-                      className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:bg-gray-50"
+                      className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-50"
                     />
                     <motion.button
                       onClick={sendReply}
                       disabled={sending || !replyMessage.trim()}
-                      className="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                       whileHover={{ scale: sending || !replyMessage.trim() ? 1 : 1.05 }}
                       whileTap={{ scale: sending || !replyMessage.trim() ? 1 : 0.95 }}
                     >

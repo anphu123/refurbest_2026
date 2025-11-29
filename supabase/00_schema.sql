@@ -17,6 +17,19 @@ CREATE TABLE IF NOT EXISTS categories (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Banners table
+CREATE TABLE IF NOT EXISTS banners (
+  id TEXT PRIMARY KEY,
+  title TEXT,
+  image TEXT NOT NULL,
+  link_url TEXT,
+  order_index INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active','inactive')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+
 -- Products table
 CREATE TABLE IF NOT EXISTS products (
   id TEXT PRIMARY KEY,
@@ -173,6 +186,11 @@ DROP TRIGGER IF EXISTS update_reviews_updated_at ON reviews;
 CREATE TRIGGER update_reviews_updated_at BEFORE UPDATE ON reviews
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+
+DROP TRIGGER IF EXISTS update_banners_updated_at ON banners;
+CREATE TRIGGER update_banners_updated_at BEFORE UPDATE ON banners
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
 DROP TRIGGER IF EXISTS update_coupons_updated_at ON coupons;
 CREATE TRIGGER update_coupons_updated_at BEFORE UPDATE ON coupons
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -203,6 +221,10 @@ CREATE POLICY "Categories are viewable by everyone" ON categories
 
 DROP POLICY IF EXISTS "Products are viewable by everyone" ON products;
 CREATE POLICY "Products are viewable by everyone" ON products
+  FOR SELECT USING (status = 'active');
+
+DROP POLICY IF EXISTS "Banners are viewable by everyone" ON banners;
+CREATE POLICY "Banners are viewable by everyone" ON banners
   FOR SELECT USING (status = 'active');
 
 DROP POLICY IF EXISTS "Users can insert their own orders" ON orders;

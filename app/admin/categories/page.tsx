@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Search, Edit, Trash2, X, FolderTree, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import Toast from "@/components/Toast";
 import * as LucideIcons from "lucide-react";
+import { uploadToImgbb } from "@/lib/imgbb";
 
 interface Category {
   id: string;
@@ -28,12 +29,15 @@ export default function CategoriesPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
+  const [uploading, setUploading] = useState(false);
   const [toast, setToast] = useState<{ message: string; type?: "success" | "error" | "info" } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [formData, setFormData] = useState({
     id: "",
     name: "",
     slug: "",
-    icon: "Wind",
+    image: "",
+    icon: "Smartphone",
   });
 
   const filteredCategories = categoryList.filter(category =>
@@ -72,7 +76,8 @@ export default function CategoriesPage() {
       id: "",
       name: "",
       slug: "",
-      icon: "Wind",
+      image: "",
+      icon: "Smartphone",
     });
     setShowModal(true);
   };
@@ -108,7 +113,8 @@ export default function CategoriesPage() {
           id,
           name: formData.name,
           slug,
-          icon: formData.icon || "Wind",
+          image: formData.image || null,
+          icon: formData.icon || "Smartphone",
         })
         .select()
         .single();
@@ -124,7 +130,8 @@ export default function CategoriesPage() {
         id: "",
         name: "",
         slug: "",
-        icon: "Wind",
+        image: "",
+        icon: "Smartphone",
       });
       setToast({ message: "Thêm danh mục thành công!", type: 'success' });
     } catch (error) {
@@ -143,7 +150,8 @@ export default function CategoriesPage() {
       id: cat.id,
       name: cat.name || "",
       slug: cat.slug || "",
-      icon: cat.icon || "Wind",
+      image: cat.image || "",
+      icon: cat.icon || "Smartphone",
     });
     setShowModal(true);
   };
@@ -165,7 +173,8 @@ export default function CategoriesPage() {
         .update({
           name: formData.name,
           slug,
-          icon: formData.icon || "Wind",
+          image: formData.image || null,
+          icon: formData.icon || "Smartphone",
         })
         .eq('id', editingCategoryId);
 
@@ -181,7 +190,8 @@ export default function CategoriesPage() {
         id: "",
         name: "",
         slug: "",
-        icon: "Wind",
+        image: "",
+        icon: "Smartphone",
       });
       setToast({ message: "Cập nhật danh mục thành công!", type: 'success' });
     } catch (error) {
@@ -190,6 +200,21 @@ export default function CategoriesPage() {
       setIsUpdating(false);
     }
   };
+
+  // Upload image to ImgBB for category
+  const handleUploadImage = async (file: File) => {
+    try {
+      setUploading(true);
+      const url = await uploadToImgbb(file);
+      setFormData((f) => ({ ...f, image: url }));
+      setToast({ message: "Tải ảnh thành công!", type: "success" });
+    } catch (e: any) {
+      setToast({ message: "Upload ảnh thất bại: " + (e.message || ""), type: "error" });
+    } finally {
+      setUploading(false);
+    }
+  };
+
 
   const handleDeleteCategory = async (categoryId: string) => {
     if (!confirm(`Bạn có chắc muốn xóa danh mục này?`)) return;
@@ -220,12 +245,7 @@ export default function CategoriesPage() {
     }
   };
 
-  const iconOptions = [
-    "Wind", "Zap", "Shield", "Sun", "Home", "Activity", "Leaf", "Sparkles",
-    "Filter", "Droplet", "Flame", "Snowflake", "TreePine", "Cloud", "AirVent",
-    "Fan", "Airplay", "Radar", "Thermometer", "Waves", "Battery", "Bolt",
-    "Star", "Heart", "ShieldCheck", "CheckCircle", "XCircle", "AlertCircle"
-  ];
+
 
   return (
     <div>
@@ -241,14 +261,14 @@ export default function CategoriesPage() {
           <input
             type="text"
             placeholder="Tìm kiếm danh mục..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         <Button
           onClick={handleAddCategory}
-          className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white"
+          className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
         >
           <Plus className="w-5 h-5 mr-2" />
           Thêm danh mục
@@ -272,7 +292,7 @@ export default function CategoriesPage() {
             {searchQuery ? "Thử tìm kiếm với từ khóa khác" : "Thêm danh mục đầu tiên của bạn"}
           </p>
           {!searchQuery && (
-            <Button onClick={handleAddCategory} className="bg-sky-500 hover:bg-sky-600 text-white">
+            <Button onClick={handleAddCategory} className="bg-green-500 hover:bg-green-600 text-white">
               <Plus className="w-5 h-5 mr-2" />
               Thêm danh mục
             </Button>
@@ -281,9 +301,9 @@ export default function CategoriesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredCategories.map((category) => {
-            const IconName = category.icon || 'Wind';
+            const IconName = category.icon || 'Smartphone';
             const IconComponent = (LucideIcons as any)[IconName] || LucideIcons.Wind;
-            
+
             return (
               <motion.div
                 key={category.id}
@@ -293,8 +313,14 @@ export default function CategoriesPage() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-sky-100 to-blue-100 rounded-xl flex items-center justify-center">
-                      <IconComponent className="w-6 h-6 text-sky-600" />
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden bg-white border border-gray-200">
+                      {category.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={category.image} alt={category.name} className="w-10 h-10 object-contain" />
+                      ) : (
+                        <IconComponent className="w-6 h-6 text-red-600" />
+                      )}
+
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900">{category.name}</h3>
@@ -304,7 +330,7 @@ export default function CategoriesPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleEditCategory(category.id)}
-                      className="p-2 text-gray-600 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
+                      className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
@@ -376,8 +402,8 @@ export default function CategoriesPage() {
                           slug: isEditMode ? formData.slug : generateSlug(e.target.value),
                         });
                       }}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
-                      placeholder="Ví dụ: Máy lọc HEPA"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
+                      placeholder="Ví dụ: iPhone 15 Pro"
                       required
                     />
                   </div>
@@ -390,8 +416,8 @@ export default function CategoriesPage() {
                       type="text"
                       value={formData.slug}
                       onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
-                      placeholder="may-loc-hepa"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
+                      placeholder="iphone-15-pro"
                     />
                     <p className="text-xs text-gray-500 mt-1">Tự động tạo từ tên nếu để trống</p>
                   </div>
@@ -405,8 +431,8 @@ export default function CategoriesPage() {
                         type="text"
                         value={formData.id}
                         onChange={(e) => setFormData({ ...formData, id: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none"
-                        placeholder="may-loc-hepa"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
+                        placeholder="iphone"
                       />
                       <p className="text-xs text-gray-500 mt-1">Tự động dùng slug nếu để trống</p>
                     </div>
@@ -414,46 +440,58 @@ export default function CategoriesPage() {
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Icon <span className="text-gray-500 font-normal text-xs">(Chọn icon để hiển thị)</span>
-                    </label>
+                        Ảnh danh mục
+                      </label>
                     {/* Icon Preview */}
+                      {/* Image Preview */}
                     <div className="mb-3 p-4 bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center">
-                      {(() => {
-                        const IconName = formData.icon || 'Wind';
-                        const IconComponent = (LucideIcons as any)[IconName] || LucideIcons.Wind;
-                        return (
-                          <div className="flex flex-col items-center gap-2">
-                            <div className="w-16 h-16 bg-gradient-to-br from-sky-100 to-blue-100 rounded-xl flex items-center justify-center">
-                              <IconComponent className="w-8 h-8 text-sky-600" />
-                            </div>
-                            <span className="text-xs text-gray-600 font-medium">{IconName}</span>
-                          </div>
-                        );
-                      })()}
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-20 h-20 rounded-xl flex items-center justify-center overflow-hidden bg-white border border-gray-200">
+                          {formData.image ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={formData.image} alt="Preview" className="w-16 h-16 object-contain" />
+                          ) : (
+                            <span className="text-xs text-gray-400">Chưa có ảnh</span>
+                          )}
+                        </div>
+                        <span className="text-xs text-gray-600 font-medium">Ảnh xem trước</span>
+                      </div>
                     </div>
-                    {/* Icon Grid Picker */}
-                    <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 border border-gray-200 rounded-lg bg-gray-50">
-                      {iconOptions.map((icon) => {
-                        const IconComponent = (LucideIcons as any)[icon] || LucideIcons.Wind;
-                        const isSelected = formData.icon === icon;
-                        return (
+
+                    {/* Image URL input */}
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-gray-700">Ảnh danh mục (URL)</label>
+                      <input
+                        type="text"
+                        value={formData.image || ''}
+                        onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none"
+                        placeholder="https://.../category.png"
+                      />
+                      <div className="flex items-center gap-3">
+                        <label className="inline-block">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => e.target.files && handleUploadImage(e.target.files[0])}
+                          />
+                          <span className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${uploading ? 'bg-gray-200' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                            {uploading ? 'Đang tải lên...' : 'Tải ảnh từ máy'}
+                          </span>
+                        </label>
+                        {formData.image && (
                           <button
-                            key={icon}
                             type="button"
-                            onClick={() => setFormData({ ...formData, icon })}
-                            className={`p-2 rounded-lg transition-all hover:bg-white ${
-                              isSelected
-                                ? 'bg-sky-500 text-white shadow-md ring-2 ring-sky-500'
-                                : 'bg-white text-gray-600 hover:shadow-sm'
-                            }`}
-                            title={icon}
+                            className="text-sm text-gray-600 hover:text-red-600"
+                            onClick={() => setFormData({ ...formData, image: '' })}
                           >
-                            <IconComponent className="w-5 h-5 mx-auto" />
+                            Xóa ảnh
                           </button>
-                        );
-                      })}
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500">Nên dùng ảnh vuông nền trong suốt (PNG/SVG), kích thước ~ 96x96px.</p>
                     </div>
-                    <p className="text-xs text-gray-500 mt-2">Click vào icon để chọn</p>
                   </div>
 
                   <div className="flex gap-3 pt-4">
@@ -467,7 +505,7 @@ export default function CategoriesPage() {
                     <Button
                       onClick={isEditMode ? handleUpdateCategory : handleCreateCategory}
                       disabled={isCreating || isUpdating}
-                      className="flex-1 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {(isCreating || isUpdating) ? (
                         <>

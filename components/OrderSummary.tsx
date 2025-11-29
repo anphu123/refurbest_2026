@@ -8,9 +8,10 @@ import { formatPrice } from "@/lib/utils";
 
 interface OrderSummaryProps {
   items?: import('@/lib/stores/cart').CartItem[];
+  shippingFee?: number;
 }
 
-export default function OrderSummary({ items: propItems }: OrderSummaryProps) {
+export default function OrderSummary({ items: propItems, shippingFee: propShippingFee }: OrderSummaryProps) {
   const { items: storeItems, getTotalItems, getTotalPrice, getTotalSavings } = useCartStore();
   
   // Sử dụng propItems nếu có, không thì dùng storeItems
@@ -25,9 +26,9 @@ export default function OrderSummary({ items: propItems }: OrderSummaryProps) {
     return total;
   }, 0);
   const shippingThreshold = 2000000;
-  const shippingFee = totalPrice >= shippingThreshold ? 0 : 50000;
+  const shippingFee = propShippingFee !== undefined ? propShippingFee : (totalPrice >= shippingThreshold ? 0 : 30000);
   const finalTotal = totalPrice + shippingFee;
-  const isFreeShipping = totalPrice >= shippingThreshold;
+  const isFreeShipping = shippingFee === 0;
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -41,7 +42,7 @@ export default function OrderSummary({ items: propItems }: OrderSummaryProps) {
           <motion.div
             animate={{ rotate: [0, 5, -5, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-sky-500 to-blue-600 rounded-full flex items-center justify-center"
+            className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center"
           >
             <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
           </motion.div>
@@ -89,7 +90,7 @@ export default function OrderSummary({ items: propItems }: OrderSummaryProps) {
                 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1 sm:gap-2">
-                    <span className="font-bold text-sky-600 text-xs sm:text-sm">
+                    <span className="font-bold text-green-600 text-xs sm:text-sm">
                       {formatPrice(item.product.price)}
                     </span>
                     {item.product.originalPrice && item.product.originalPrice > item.product.price && (
@@ -181,7 +182,7 @@ export default function OrderSummary({ items: propItems }: OrderSummaryProps) {
           {/* Total */}
           <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-3">
             <span>Tổng cộng:</span>
-            <span className="text-sky-600">{formatPrice(finalTotal)}</span>
+            <span className="text-green-600">{formatPrice(finalTotal)}</span>
           </div>
         </div>
       </motion.div>
@@ -222,24 +223,24 @@ export default function OrderSummary({ items: propItems }: OrderSummaryProps) {
         </div>
 
         {/* Delivery Info */}
-        <div className="bg-gradient-to-r from-blue-50 to-sky-50 border border-blue-200 rounded-xl p-4">
+        <div className="bg-gradient-to-r from-green-50 to-green-50 border border-green-200 rounded-xl p-4">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-              <Truck className="w-4 h-4 text-blue-600" />
+            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+              <Truck className="w-4 h-4 text-green-600" />
             </div>
             <h4 className="font-semibold text-blue-800">Thông tin giao hàng</h4>
           </div>
-          <div className="space-y-2 text-sm text-blue-700">
+          <div className="space-y-2 text-sm text-green-700">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span>Giao hàng nhanh 2-4 giờ tại TP.HCM</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span>Giao hàng 1-2 ngày tại các tỉnh khác</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span>Miễn phí vận chuyển đơn hàng từ 2 triệu</span>
             </div>
           </div>

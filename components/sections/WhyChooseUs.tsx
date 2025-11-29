@@ -7,45 +7,45 @@ import FadeInWhenVisible from "@/components/animations/FadeInWhenVisible";
 export default function WhyChooseUs() {
   const features = [
     {
-      icon: Shield,
-      title: "100% Chính hãng",
-      description: "Cam kết sản phẩm chính hãng, xuất hóa đơn VAT đầy đủ",
-      color: "from-red-500 to-red-600",
-      stats: "100%",
-    },
-    {
-      icon: Truck,
-      title: "Giao hàng 2H",
-      description: "Giao nhanh trong 2 giờ tại nội thành HCM & HN",
-      color: "from-blue-500 to-blue-600",
-      stats: "2 giờ",
+      icon: Award,
+      title: "Chất lượng đảm bảo",
+      description: "Thiết bị được kiểm định nghiêm ngặt, thay thế linh kiện nếu cần, đảm bảo hoạt động ổn định như máy mới",
+      color: "from-green-500 to-green-600",
+      stats: "Như mới",
     },
     {
       icon: DollarSign,
-      title: "Giá tốt nhất",
-      description: "Cam kết giá tốt nhất thị trường, hoàn tiền nếu rẻ hơn",
+      title: "Tiết kiệm đến 50%",
+      description: "So với thiết bị mới, bạn có thể tiết kiệm từ 20–80%, mà vẫn được bảo hành rõ ràng",
       color: "from-green-500 to-green-600",
-      stats: "Tốt nhất",
+      stats: "50%",
+    },
+    {
+      icon: Shield,
+      title: "Bảo hành 12 tháng",
+      description: "Tất cả thiết bị đều được bảo hành 12 tháng. Ưu tiên bảo hành chính hãng nếu còn thời gian",
+      color: "from-green-500 to-green-600",
+      stats: "12 tháng",
     },
     {
       icon: RefreshCcw,
       title: "Đổi trả 30 ngày",
-      description: "Chính sách đổi trả linh hoạt trong vòng 30 ngày",
-      color: "from-purple-500 to-purple-600",
+      description: "Đổi trả trong 30 ngày nếu lỗi kỹ thuật. Không thu phí đổi trả",
+      color: "from-green-500 to-green-600",
       stats: "30 ngày",
     },
     {
-      icon: Award,
-      title: "Bảo hành dài hạn",
-      description: "Bảo hành chính hãng tới 24 tháng cho mọi sản phẩm",
-      color: "from-orange-500 to-orange-600",
-      stats: "24 tháng",
+      icon: Truck,
+      title: "Giao hàng toàn quốc",
+      description: "Miễn phí giao hàng với đơn từ 5 triệu. Giao nhanh 1-2 ngày nội thành",
+      color: "from-green-500 to-green-600",
+      stats: "Miễn phí",
     },
     {
       icon: Headphones,
       title: "Hỗ trợ 24/7",
-      description: "Đội ngũ tư vấn chuyên nghiệp, hỗ trợ mọi lúc mọi nơi",
-      color: "from-pink-500 to-pink-600",
+      description: "Đội ngũ kỹ thuật luôn sẵn sàng hỗ trợ từ xa hoặc trực tiếp, xử lý nhanh chóng",
+      color: "from-green-500 to-green-600",
       stats: "24/7",
     },
   ];
@@ -64,10 +64,10 @@ export default function WhyChooseUs() {
         <FadeInWhenVisible>
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold font-display text-gray-900 mb-4">
-              Tại sao chọn chúng tôi?
+              Lý do nên chọn thiết bị tân trang
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              Chúng tôi cam kết mang đến trải nghiệm mua sắm tốt nhất với những giá trị vượt trội
+              Tiết kiệm thông minh, chất lượng đảm bảo, bảo vệ môi trường
             </p>
           </div>
         </FadeInWhenVisible>
