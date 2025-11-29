@@ -24,10 +24,11 @@ export interface Product {
   // Derived fields for convenience in UI (min across variants)
   price?: number;
   originalPrice?: number;
+  discount?: number;
   stock?: number;
   rating?: number;
   reviews?: number;
-    badge?: 'hot' | 'new' | 'sale' | 'bestseller';
+  badge?: 'hot' | 'new' | 'sale' | 'bestseller';
   status?: 'active' | 'inactive';
   created_at?: string;
   updated_at?: string;
