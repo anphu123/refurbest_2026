@@ -106,13 +106,13 @@ export const useCartStore = create<CartStore>()(
 
       getTotalPrice: () => {
         return get().items.reduce((total, item) => {
-          return total + (item.product.price * item.quantity);
+          return total + ((item.product.price || 0) * item.quantity);
         }, 0);
       },
 
       getTotalSavings: () => {
         return get().items.reduce((total, item) => {
-          if (item.product.originalPrice) {
+          if (item.product.originalPrice && item.product.price) {
             return total + ((item.product.originalPrice - item.product.price) * item.quantity);
           }
           return total;
