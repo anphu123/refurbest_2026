@@ -18,9 +18,9 @@ export default function OrderSummary({ items: propItems, shippingFee: propShippi
   const items = propItems || storeItems;
   
   const totalItems = items.reduce((total, item) => total + item.quantity, 0);
-  const totalPrice = items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+  const totalPrice = items.reduce((total, item) => total + ((item.product.price || 0) * item.quantity), 0);
   const totalSavings = items.reduce((total, item) => {
-    if (item.product.originalPrice) {
+    if (item.product.originalPrice && item.product.price) {
       return total + ((item.product.originalPrice - item.product.price) * item.quantity);
     }
     return total;
