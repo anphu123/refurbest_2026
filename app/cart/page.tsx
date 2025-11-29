@@ -166,9 +166,9 @@ export default function CartPage() {
                           {/* Price */}
                           <div className="flex items-center gap-2 mb-2 sm:mb-3">
                             <span className="font-bold text-green-600 text-sm sm:text-base md:text-lg">
-                              {formatPrice(item.product.price)}
+                              {formatPrice(item.product.price || 0)}
                             </span>
-                            {item.product.originalPrice && item.product.originalPrice > item.product.price && (
+                            {item.product.originalPrice && item.product.price && item.product.originalPrice > item.product.price && (
                               <span className="text-[10px] sm:text-xs text-gray-500 line-through">
                                 {formatPrice(item.product.originalPrice)}
                               </span>
