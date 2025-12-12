@@ -3,8 +3,37 @@
 import { motion } from "framer-motion";
 import { Star, Quote, User } from "lucide-react";
 import FadeInWhenVisible from "@/components/animations/FadeInWhenVisible";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Testimonials() {
+  const [mounted, setMounted] = useState(false);
+  const [title, setTitle] = useState("Khách hàng nói gì về chúng tôi");
+  const [subtitle, setSubtitle] = useState("Hơn 10,000+ khách hàng tin tưởng và hài lòng với sản phẩm, dịch vụ của chúng tôi");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    
+    const loadSettings = async () => {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from('site_settings')
+        .select('testimonials_title, testimonials_subtitle')
+        .single();
+      
+      if (data) {
+        if (data.testimonials_title) setTitle(data.testimonials_title);
+        if (data.testimonials_subtitle) setSubtitle(data.testimonials_subtitle);
+      }
+    };
+    
+    loadSettings();
+  }, [mounted]);
+
   const testimonials = [
     {
       name: "Anh Tuấn",
@@ -46,10 +75,10 @@ export default function Testimonials() {
         <FadeInWhenVisible>
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold font-display text-gray-900 mb-4">
-              Khách hàng nói gì về chúng tôi
+              {title}
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Hơn 10,000+ khách hàng tin tưởng và hài lòng với sản phẩm, dịch vụ của chúng tôi
+              {subtitle}
             </p>
           </div>
         </FadeInWhenVisible>

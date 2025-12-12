@@ -41,7 +41,7 @@ const menuItems = [
   { icon: MessageCircle, label: "CSKH", path: "/admin/customer-service" },
   { icon: Bot, label: "AI Chatbot", path: "/admin/chatbot/settings" },
   { icon: Mail, label: "Bản tin", path: "/admin/newsletters" },
-  { icon: Settings, label: "Cài đặt", path: "/admin/settings" },
+  { icon: Settings, label: "Cài đặt Website", path: "/admin/site-settings" },
 ];
 
 export default function AdminLayout({ children }: AdminLayoutProps) {

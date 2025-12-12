@@ -15,6 +15,19 @@ import { Phone, MessageCircle, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+
+interface SiteSettings {
+  hero_badge: string;
+  hero_headlines: string[];
+  hero_descriptions: string[];
+  stats_products: number;
+  stats_customers: number;
+  stats_rating: number;
+  stats_satisfaction: number;
+  phone: string;
+  email: string;
+}
 
 export default function HomePage() {
   const [textIndex, setTextIndex] = useState(0);
@@ -25,20 +38,43 @@ export default function HomePage() {
     rating: 0,
     efficiency: 0
   });
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
   
-  const headlines = [
+  // Fetch settings from database
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("hero_badge, hero_headlines, hero_descriptions, stats_products, stats_customers, stats_rating, stats_satisfaction, phone, email")
+        .single();
+      
+      if (!error && data) {
+        setSettings(data);
+      }
+    };
+    
+    fetchSettings();
+  }, []);
+
+  // Use settings from database or fallback to defaults
+  const headlines = settings?.hero_headlines || [
     "Công nghệ chất lượng\nGiá trị bền vững",
     "Tiết kiệm thông minh\nBảo hành 12 tháng",
     "iPhone, Samsung, Laptop\nĐồng hồ, Tai nghe",
     "Thiết bị tân trang\nĐáng tin cậy"
   ];
 
-  const descriptions = [
+  const descriptions = settings?.hero_descriptions || [
     "Thiết bị công nghệ 'như mới' với mức giá hợp lý. Tiết kiệm đến 50% mà vẫn đảm bảo chất lượng và trải nghiệm đáng tin cậy.",
     "Mỗi thiết bị được kiểm định kỹ lưỡng theo quy trình chuẩn. Bảo hành 12 tháng, đổi trả trong 30 ngày nếu lỗi kỹ thuật.",
     "Đa dạng sản phẩm: iPhone, Samsung, Laptop, Tablet, Đồng hồ thông minh, Tai nghe & loa. Phù hợp với mọi nhu cầu.",
     "Chọn thiết bị tân trang là bạn đang góp phần giảm rác thải điện tử, tiết kiệm tài nguyên và bảo vệ môi trường."
   ];
+
+  const heroBadge = settings?.hero_badge || "THIẾT BỊ TÂN TRANG CHẤT LƯỢNG";
+  const phoneNumber = settings?.phone || "1800 2097";
+  const email = settings?.email || "info@refurbest.vn";
 
   // Change text every 6 seconds with smooth fade transition
   useEffect(() => {
@@ -86,15 +122,17 @@ export default function HomePage() {
 
   // Counter animation for stats
   useEffect(() => {
+    if (!settings) return;
+    
     const duration = 2000; // 2 seconds
     const steps = 60;
     const interval = duration / steps;
 
     const targets = {
-      products: 500,
-      customers: 50000,
-      rating: 4.9,
-      efficiency: 100
+      products: settings.stats_products || 500,
+      customers: settings.stats_customers || 50000,
+      rating: settings.stats_rating || 4.9,
+      efficiency: settings.stats_satisfaction || 100
     };
 
     let step = 0;
@@ -116,7 +154,7 @@ export default function HomePage() {
     }, interval);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [settings]);
 
   return (
     <div className="min-h-screen">
@@ -136,7 +174,7 @@ export default function HomePage() {
                   {/* Badge */}
                   <div className="inline-block mb-3 sm:mb-4 md:mb-6">
                     <span className="text-[10px] sm:text-xs md:text-sm font-bold text-white tracking-wide sm:tracking-wider md:tracking-widest uppercase bg-black/30 backdrop-blur-sm px-2.5 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 rounded-full border border-white/40">
-                      THIẾT BỊ TÂN TRANG CHẤT LƯỢNG
+                      {heroBadge}
                     </span>
                   </div>
 
@@ -199,7 +237,7 @@ export default function HomePage() {
                       </motion.span>
                     </motion.a>
                     <motion.a
-                      href="tel:18002097"
+                      href={`tel:${phoneNumber.replace(/\s/g, '')}`}
                       whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
                       transition={{ duration: 0.2, ease: "easeInOut" }}
@@ -216,7 +254,7 @@ export default function HomePage() {
                       >
                         <Phone className="w-4 h-4 md:w-5 md:h-5" />
                       </motion.div>
-                      1800 2097
+                      {phoneNumber}
                     </motion.a>
                   </div>
 
@@ -348,8 +386,8 @@ export default function HomePage() {
                   <Phone className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Hotline</h3>
-                <a href="tel:18002097" className="text-2xl font-bold text-green-600 hover:text-green-700 transition-colors block mb-3">
-                  1800 2097
+                <a href={`tel:${phoneNumber.replace(/\s/g, '')}`} className="text-2xl font-bold text-green-600 hover:text-green-700 transition-colors block mb-3">
+                  {phoneNumber}
                 </a>
                 <p className="text-sm text-gray-600">24/7 miễn phí</p>
               </motion.div>
@@ -386,8 +424,8 @@ export default function HomePage() {
                   <Mail className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Email</h3>
-                <a href="mailto:info@refurbest.vn" className="text-green-600 hover:text-green-700 font-semibold mb-3 block break-all">
-                  info@refurbest.vn
+                <a href={`mailto:${email}`} className="text-green-600 hover:text-green-700 font-semibold mb-3 block break-all">
+                  {email}
                 </a>
                 <p className="text-sm text-gray-600">Phản hồi trong 24h</p>
               </motion.div>

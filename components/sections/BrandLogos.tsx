@@ -4,13 +4,35 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 export default function BrandLogos() {
+  const [mounted, setMounted] = useState(false);
   const [brands, setBrands] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sectionTitle, setSectionTitle] = useState("Thương hiệu điện thoại");
+  const [sectionSubtitle, setSectionSubtitle] = useState("Chọn thương hiệu yêu thích của bạn");
 
   useEffect(() => {
-    const loadBrands = async () => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    
+    const loadData = async () => {
       try {
         const supabase = createClient();
+        
+        // Load settings
+        const { data: settings } = await supabase
+          .from('site_settings')
+          .select('brand_section_title, brand_section_subtitle')
+          .single();
+        
+        if (settings) {
+          if (settings.brand_section_title) setSectionTitle(settings.brand_section_title);
+          if (settings.brand_section_subtitle) setSectionSubtitle(settings.brand_section_subtitle);
+        }
+        
+        // Load brands
         const { data, error } = await supabase
           .from('products')
           .select('brand')
@@ -31,8 +53,8 @@ export default function BrandLogos() {
       }
     };
 
-    loadBrands();
-  }, []);
+    loadData();
+  }, [mounted]);
 
   const handleBrandClick = (brand: string) => {
     // Scroll to products section và filter theo brand
@@ -84,10 +106,10 @@ export default function BrandLogos() {
         {/* Section Header */}
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-            Thương hiệu điện thoại
+            {sectionTitle}
           </h2>
           <p className="text-gray-600 text-sm md:text-base">
-            Chọn thương hiệu yêu thích của bạn
+            {sectionSubtitle}
           </p>
         </div>
 
