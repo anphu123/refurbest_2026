@@ -5,48 +5,54 @@ import Footer from "@/components/Footer";
 import Botchat from "@/components/Botchat";
 import { motion } from "framer-motion";
 import { CheckCircle, Search, Wrench, Shield, Package, Truck } from "lucide-react";
+import { useRefurbishmentProcessSettings } from "@/lib/hooks/useRefurbishmentProcessSettings";
 
 export default function QuyTrinhTanTrangPage() {
-  const processSteps = [
+  const { settings } = useRefurbishmentProcessSettings();
+
+  const iconMap: Record<string, any> = {
+    Search,
+    Wrench,
+    Shield,
+    CheckCircle,
+    Package,
+    Truck
+  };
+
+  const processSteps = settings?.process_steps || [
     {
-      icon: Search,
+      icon: "Search",
       title: "1. Kiểm tra ban đầu",
-      description: "Kiểm tra nguồn, bảo mật, tài khoản. Đảm bảo thiết bị lên nguồn và đã gỡ sạch tài khoản cũ (iCloud, FRP, Samsung account).",
-      color: "from-green-500 to-green-600"
+      description: "Kiểm tra nguồn, bảo mật, tài khoản. Đảm bảo thiết bị lên nguồn và đã gỡ sạch tài khoản cũ (iCloud, FRP, Samsung account)."
     },
     {
-      icon: Wrench,
+      icon: "Wrench",
       title: "2. Kiểm định phần cứng",
-      description: "Kiểm tra toàn diện 20+ bước: màn hình, pin, loa, camera, cảm biến, kết nối mạng, wifi, bluetooth, GPS...",
-      color: "from-green-500 to-green-600"
+      description: "Kiểm tra toàn diện 20+ bước: màn hình, pin, loa, camera, cảm biến, kết nối mạng, wifi, bluetooth, GPS..."
     },
     {
-      icon: Shield,
+      icon: "Shield",
       title: "3. Thay thế linh kiện",
-      description: "Thay thế linh kiện đạt tiêu chuẩn kỹ thuật của NSX nếu cần: pin, màn hình, camera... Chỉ dùng linh kiện chất lượng cao.",
-      color: "from-green-500 to-green-600"
+      description: "Thay thế linh kiện đạt tiêu chuẩn kỹ thuật của NSX nếu cần: pin, màn hình, camera... Chỉ dùng linh kiện chất lượng cao."
     },
     {
-      icon: CheckCircle,
+      icon: "CheckCircle",
       title: "4. Làm sạch & tân trang",
-      description: "Vệ sinh toàn bộ máy, làm sạch bụi bẩn, dầu mỡ. Đánh bóng vỏ máy để trông như mới.",
-      color: "from-green-500 to-green-600"
+      description: "Vệ sinh toàn bộ máy, làm sạch bụi bẩn, dầu mỡ. Đánh bóng vỏ máy để trông như mới."
     },
     {
-      icon: Package,
+      icon: "Package",
       title: "5. Phân loại & đóng gói",
-      description: "Phân loại theo 5 cấp độ (Loại 1-5) dựa trên tình trạng ngoại hình và chức năng. Đóng gói cẩn thận với phụ kiện đầy đủ.",
-      color: "from-green-500 to-green-600"
+      description: "Phân loại theo 5 cấp độ (Loại 1-5) dựa trên tình trạng ngoại hình và chức năng. Đóng gói cẩn thận với phụ kiện đầy đủ."
     },
     {
-      icon: Truck,
+      icon: "Truck",
       title: "6. Sẵn sàng giao hàng",
-      description: "Thiết bị đã sẵn sàng để giao đến tay khách hàng. Kèm theo bảo hành 12 tháng và chính sách đổi trả 30 ngày.",
-      color: "from-green-500 to-green-600"
+      description: "Thiết bị đã sẵn sàng để giao đến tay khách hàng. Kèm theo bảo hành 12 tháng và chính sách đổi trả 30 ngày."
     }
   ];
 
-  const qualityChecks = [
+  const qualityChecks = settings?.quality_checks || [
     "Kiểm tra phần cứng: CPU, RAM, bộ nhớ",
     "Kiểm tra màn hình: độ sáng, màu sắc, cảm ứng",
     "Kiểm tra pin: dung lượng, chu kỳ sạc",
@@ -82,10 +88,10 @@ export default function QuyTrinhTanTrangPage() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Quy trình tân trang máy
+              {settings?.hero_title || "Quy trình tân trang máy"}
             </h1>
             <p className="text-xl text-white/90">
-              Mỗi thiết bị được kiểm tra theo quy trình 20+ bước nghiêm ngặt
+              {settings?.hero_subtitle || "Mỗi thiết bị được kiểm tra theo quy trình 20+ bước nghiêm ngặt"}
             </p>
           </motion.div>
         </div>
@@ -107,22 +113,25 @@ export default function QuyTrinhTanTrangPage() {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {processSteps.map((step, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all border border-gray-100"
-                >
-                  <div className={`w-16 h-16 bg-gradient-to-br ${step.color} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}>
-                    <step.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{step.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{step.description}</p>
-                </motion.div>
-              ))}
+              {processSteps.map((step, index) => {
+                const IconComponent = iconMap[step.icon] || CheckCircle;
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all border border-gray-100"
+                  >
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                      <IconComponent className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">{step.title}</h3>
+                    <p className="text-gray-600 leading-relaxed">{step.description}</p>
+                  </motion.div>
+                );
+              })}
             </div>
           </section>
 
@@ -130,10 +139,10 @@ export default function QuyTrinhTanTrangPage() {
           <section className="mb-16">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                20+ điểm kiểm tra chất lượng
+                {settings?.quality_checks_title || "20+ điểm kiểm tra chất lượng"}
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Mỗi thiết bị được kiểm tra kỹ lưỡng từ phần cứng đến phần mềm
+                {settings?.quality_checks_subtitle || "Mỗi thiết bị được kiểm tra kỹ lưỡng từ phần cứng đến phần mềm"}
               </p>
             </div>
 
@@ -159,24 +168,18 @@ export default function QuyTrinhTanTrangPage() {
               className="bg-gradient-to-br from-green-600 to-green-700 rounded-2xl p-8 md:p-12 text-center text-white"
             >
               <h2 className="text-3xl font-bold mb-4">
-                Cam kết chất lượng
+                {settings?.commitment_title || "Cam kết chất lượng"}
               </h2>
               <p className="text-xl mb-6 text-white/90">
-                Mỗi thiết bị được kiểm tra theo quy trình chuẩn – từ phần cứng đến phần mềm, đảm bảo hoạt động ổn định và bền bỉ
+                {settings?.commitment_description || "Mỗi thiết bị được kiểm tra theo quy trình chuẩn – từ phần cứng đến phần mềm, đảm bảo hoạt động ổn định và bền bỉ"}
               </p>
               <div className="flex flex-wrap justify-center gap-6 text-lg">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-6 h-6" />
-                  <span>Bảo hành 12 tháng</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-6 h-6" />
-                  <span>Đổi trả 30 ngày</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-6 h-6" />
-                  <span>Hỗ trợ 24/7</span>
-                </div>
+                {(settings?.commitment_items || ["Bảo hành 12 tháng", "Đổi trả 30 ngày", "Hỗ trợ 24/7"]).map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <CheckCircle className="w-6 h-6" />
+                    <span>{item}</span>
+                  </div>
+                ))}
               </div>
             </motion.div>
           </section>

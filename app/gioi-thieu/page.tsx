@@ -7,32 +7,39 @@ import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, Award, Target, Lightbulb, Heart, MessageCircle, Wrench, Leaf } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSiteSettings } from "@/lib/hooks/useSiteSettings";
+import { useAboutPageSettings } from "@/lib/hooks/useAboutPageSettings";
 
 export default function IntroPage() {
   const [mounted, setMounted] = useState(false);
   const { settings } = useSiteSettings();
+  const { settings: aboutSettings } = useAboutPageSettings();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const features = [
+  // Default features if no settings
+  const features = aboutSettings?.core_values || [
     {
-      icon: Award,
       title: "CHẤT LƯỢNG AN TÂM",
       description: "Mỗi thiết bị đều được kiểm định kỹ lưỡng theo quy trình chuẩn – từ phần cứng đến phần mềm, đảm bảo hoạt động ổn định và bền bỉ."
     },
     {
-      icon: Target,
       title: "GIÁ TRỊ HỢP LÝ",
       description: "Bạn không cần bỏ ra số tiền lớn cho thiết bị mới, vẫn có thể sở hữu những sản phẩm đáng tin cậy với chi phí tiết kiệm đến 50%."
     },
     {
-      icon: Lightbulb,
       title: "HƯỚNG ĐẾN MÔI TRƯỜNG",
       description: "Mỗi sản phẩm refurbished bạn chọn mua là một hành động góp phần giảm rác thải điện tử, tiết kiệm tài nguyên và bảo vệ hành tinh."
     }
   ];
+
+  const iconMap: Record<string, any> = {
+    Award,
+    Target,
+    Lightbulb,
+    Heart
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -74,13 +81,13 @@ export default function IntroPage() {
                 />
               </div>
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-6 tracking-tight">
-                VỀ REFURBEST
+                {aboutSettings?.hero_title || "VỀ REFURBEST"}
               </h1>
               <p className="text-2xl md:text-3xl font-bold text-green-600 mb-2">
-                CÔNG NGHỆ CHẤT LƯỢNG - GIÁ TRỊ BỀN VỮNG
+                {aboutSettings?.hero_subtitle || "CÔNG NGHỆ CHẤT LƯỢNG - GIÁ TRỊ BỀN VỮNG"}
               </p>
               <p className="text-xl md:text-2xl font-semibold text-gray-700">
-                THIẾT BỊ TÂN TRANG ĐÁNG TIN CẬY
+                {aboutSettings?.hero_description || "THIẾT BỊ TÂN TRANG ĐÁNG TIN CẬY"}
               </p>
             </motion.div>
           </div>
@@ -245,18 +252,18 @@ export default function IntroPage() {
               </div>
               <div className="max-w-4xl mx-auto space-y-6 text-lg text-gray-700 leading-relaxed">
                 <p>
-                  Refurbest ra đời với một niềm tin đơn giản: <strong>công nghệ chất lượng không nhất thiết phải đi kèm với giá cao hay gây hại đến môi trường.</strong>
+                  {aboutSettings?.story_intro || "Refurbest ra đời với một niềm tin đơn giản: công nghệ chất lượng không nhất thiết phải đi kèm với giá cao hay gây hại đến môi trường."}
                 </p>
                 <p>
-                  Chúng tôi nhận thấy mỗi năm có hàng triệu thiết bị điện tử bị bỏ đi, trong khi phần lớn trong số đó vẫn còn khả năng sử dụng rất tốt nếu được kiểm tra, thay thế linh kiện và làm mới lại một cách chuyên nghiệp. Đó là lý do Refurbest ra đời – nhằm mang đến giải pháp thiết bị công nghệ "như mới" với mức giá hợp lý, nhưng vẫn đảm bảo chất lượng và trải nghiệm đáng tin cậy cho người dùng.
+                  {aboutSettings?.story_content || "Chúng tôi nhận thấy mỗi năm có hàng triệu thiết bị điện tử bị bỏ đi, trong khi phần lớn trong số đó vẫn còn khả năng sử dụng rất tốt nếu được kiểm tra, thay thế linh kiện và làm mới lại một cách chuyên nghiệp. Đó là lý do Refurbest ra đời – nhằm mang đến giải pháp thiết bị công nghệ 'như mới' với mức giá hợp lý, nhưng vẫn đảm bảo chất lượng và trải nghiệm đáng tin cậy cho người dùng."}
                 </p>
                 <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-r-lg">
                   <p className="text-xl font-semibold text-green-700">
-                    Refurbest không chỉ là một cửa hàng – chúng tôi là một phần của xu thế mới: tiêu dùng bền vững, công nghệ thân thiện, và lối sống thông minh.
+                    {aboutSettings?.story_highlight || "Refurbest không chỉ là một cửa hàng – chúng tôi là một phần của xu thế mới: tiêu dùng bền vững, công nghệ thân thiện, và lối sống thông minh."}
                   </p>
                 </div>
                 <p>
-                  Hành trình của bạn với Refurbest không chỉ là sở hữu một thiết bị đáng tin cậy – mà còn là chung tay kiến tạo một tương lai đáng sống hơn.
+                  {aboutSettings?.story_conclusion || "Hành trình của bạn với Refurbest không chỉ là sở hữu một thiết bị đáng tin cậy – mà còn là chung tay kiến tạo một tương lai đáng sống hơn."}
                 </p>
               </div>
             </div>
@@ -272,10 +279,10 @@ export default function IntroPage() {
                   <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-500 transition-all duration-300">
                     <Target className="w-6 h-6 text-green-600 group-hover:text-white transition-colors" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-green-600 transition-colors">Tầm nhìn</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-green-600 transition-colors">{aboutSettings?.vision_title || "Tầm nhìn"}</h3>
                 </div>
                 <p className="text-gray-700 leading-relaxed">
-                  Trở thành nơi đáng tin cậy nhất trong lòng khách hàng – nơi bạn có thể tìm thấy thiết bị công nghệ chất lượng với sự phục vụ tận tâm như người thân trong gia đình.
+                  {aboutSettings?.vision_content || "Trở thành nơi đáng tin cậy nhất trong lòng khách hàng – nơi bạn có thể tìm thấy thiết bị công nghệ chất lượng với sự phục vụ tận tâm như người thân trong gia đình."}
                 </p>
               </div>
 
@@ -284,25 +291,20 @@ export default function IntroPage() {
                   <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-500 transition-all duration-300">
                     <Wrench className="w-6 h-6 text-green-600 group-hover:text-white transition-colors" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-green-600 transition-colors">Sứ mệnh</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-green-600 transition-colors">{aboutSettings?.mission_title || "Sứ mệnh"}</h3>
                 </div>
                 <ul className="space-y-3 text-gray-700">
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 mt-1">•</span>
-                    <span>Mang đến các thiết bị tân trang an toàn – bền bỉ – tiết kiệm, giúp người dùng yên tâm sử dụng lâu dài.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 mt-1">•</span>
-                    <span>Tạo dựng trải nghiệm mua hàng minh bạch, phục vụ chu đáo, hỗ trợ kỹ thuật như bạn bè.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 mt-1">•</span>
-                    <span>Lan toả tư duy tiêu dùng công nghệ bền vững, giảm rác thải điện tử và bảo vệ môi trường sống.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-600 mt-1">•</span>
-                    <span>Đồng hành cùng cộng đồng bằng cách mở rộng tiếp cận công nghệ chất lượng với chi phí hợp lý.</span>
-                  </li>
+                  {(aboutSettings?.mission_items || [
+                    "Mang đến các thiết bị tân trang an toàn – bền bỉ – tiết kiệm, giúp người dùng yên tâm sử dụng lâu dài.",
+                    "Tạo dựng trải nghiệm mua hàng minh bạch, phục vụ chu đáo, hỗ trợ kỹ thuật như bạn bè.",
+                    "Lan toả tư duy tiêu dùng công nghệ bền vững, giảm rác thải điện tử và bảo vệ môi trường sống.",
+                    "Đồng hành cùng cộng đồng bằng cách mở rộng tiếp cận công nghệ chất lượng với chi phí hợp lý."
+                  ]).map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="text-green-600 mt-1">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -319,22 +321,25 @@ export default function IntroPage() {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {features.map((feature, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer border border-gray-100 hover:border-green-300 group"
-                >
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                    <feature.icon className="w-8 h-8 text-white" />
+              {features.map((feature, index) => {
+                const IconComponent = Award; // Default icon
+                return (
+                  <div
+                    key={index}
+                    className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer border border-gray-100 hover:border-green-300 group"
+                  >
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                      <IconComponent className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {feature.description}
+                    </p>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
@@ -401,70 +406,44 @@ export default function IntroPage() {
             </div>
 
             <div className="space-y-4">
-              {/* Commitment 1 */}
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200 hover:border-green-400 hover:shadow-xl transition-all duration-300 cursor-pointer group">
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-green-600 transition-all duration-300">
-                    <Award className="w-7 h-7 text-white" />
+              {(aboutSettings?.commitments || [
+                {
+                  title: "Kiểm định nghiêm ngặt – Máy sẵn sàng như mới",
+                  description: "Mỗi thiết bị được kiểm tra theo quy trình 20+ bước, bao gồm: kiểm tra phần cứng, màn hình, pin, loa, camera, cảm biến, kết nối mạng... trước khi được đóng gói và giao đến tay bạn."
+                },
+                {
+                  title: "Linh kiện đảm bảo – Pin đạt chuẩn, màn hình rõ nét",
+                  description: "Chúng tôi chỉ sử dụng linh kiện thay thế đạt tiêu chuẩn kỹ thuật của NSX quy định."
+                },
+                {
+                  title: "Bảo hành rõ ràng – Đổi trả minh bạch",
+                  description: "Tất cả sản phẩm đều được bảo hành 12 tháng, hỗ trợ đổi trả trong 30 ngày nếu có lỗi kỹ thuật. Nếu thiết bị vẫn còn bảo hành từ nhà sản xuất, bạn sẽ được ưu tiên bảo hành tại hãng trước."
+                },
+                {
+                  title: "Dịch vụ kỹ thuật chuyên nghiệp – Hỗ trợ 24/7",
+                  description: "Đội ngũ kỹ thuật Refurbest luôn sẵn sàng hỗ trợ từ xa hoặc trực tiếp, xử lý các vấn đề phát sinh nhanh chóng – với thái độ tận tâm, minh bạch như phục vụ người thân."
+                },
+                {
+                  title: "Hài lòng là ưu tiên số 1",
+                  description: "Chúng tôi không chỉ bán thiết bị – mà mang đến sự an tâm và hài lòng. Nếu bạn không hài lòng, chúng tôi sẽ tìm cách xử lý cho đến khi bạn yên tâm."
+                }
+              ]).map((commitment, index) => {
+                const icons = [Award, Target, Heart, Phone, Heart];
+                const IconComponent = icons[index % icons.length];
+                return (
+                  <div key={index} className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200 hover:border-green-400 hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                    <div className="flex items-start gap-4">
+                      <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-green-600 transition-all duration-300">
+                        <IconComponent className="w-7 h-7 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">{index + 1}. {commitment.title}</h3>
+                        <p className="text-gray-700 leading-relaxed">{commitment.description}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">1. Kiểm định nghiêm ngặt – Máy sẵn sàng như mới</h3>
-                    <p className="text-gray-700 leading-relaxed">Mỗi thiết bị được kiểm tra theo quy trình 20+ bước, bao gồm: kiểm tra phần cứng, màn hình, pin, loa, camera, cảm biến, kết nối mạng... trước khi được đóng gói và giao đến tay bạn.</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Commitment 2 */}
-              <div className="bg-gradient-to-br from-green-50 to-green-50 rounded-2xl p-6 border border-green-200 hover:border-green-400 hover:shadow-xl transition-all duration-300 cursor-pointer group">
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-green-600 transition-all duration-300">
-                    <Target className="w-7 h-7 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">2. Linh kiện đảm bảo – Pin đạt chuẩn, màn hình rõ nét</h3>
-                    <p className="text-gray-700 leading-relaxed">Chúng tôi chỉ sử dụng linh kiện thay thế đạt tiêu chuẩn kỹ thuật của NSX quy định.</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Commitment 3 */}
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200 hover:border-green-400 hover:shadow-xl transition-all duration-300 cursor-pointer group">
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-green-600 transition-all duration-300">
-                    <Heart className="w-7 h-7 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">3. Bảo hành rõ ràng – Đổi trả minh bạch</h3>
-                    <p className="text-gray-700 leading-relaxed">Tất cả sản phẩm đều được bảo hành 12 tháng, hỗ trợ đổi trả trong 30 ngày nếu có lỗi kỹ thuật. Nếu thiết bị vẫn còn bảo hành từ nhà sản xuất, bạn sẽ được ưu tiên bảo hành tại hãng trước.</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Commitment 4 */}
-              <div className="bg-gradient-to-br from-green-50 to-green-50 rounded-2xl p-6 border border-green-200 hover:border-green-400 hover:shadow-xl transition-all duration-300 cursor-pointer group">
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-green-600 transition-all duration-300">
-                    <Phone className="w-7 h-7 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">4. Dịch vụ kỹ thuật chuyên nghiệp – Hỗ trợ 24/7</h3>
-                    <p className="text-gray-700 leading-relaxed">Đội ngũ kỹ thuật Refurbest luôn sẵn sàng hỗ trợ từ xa hoặc trực tiếp, xử lý các vấn đề phát sinh nhanh chóng – với thái độ tận tâm, minh bạch như phục vụ người thân.</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Commitment 5 */}
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200 hover:border-green-400 hover:shadow-xl transition-all duration-300 cursor-pointer group">
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-green-600 transition-all duration-300">
-                    <Heart className="w-7 h-7 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">5. Hài lòng là ưu tiên số 1</h3>
-                    <p className="text-gray-700 leading-relaxed">Chúng tôi không chỉ bán thiết bị – mà mang đến sự an tâm và hài lòng. Nếu bạn không hài lòng, chúng tôi sẽ tìm cách xử lý cho đến khi bạn yên tâm.</p>
-                  </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
         </section>

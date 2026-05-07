@@ -20,7 +20,8 @@ import {
   Newspaper,
   Bot,
   Images,
-  Mail
+  Mail,
+  Wrench
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -42,6 +43,8 @@ const menuItems = [
   { icon: Bot, label: "AI Chatbot", path: "/admin/chatbot/settings" },
   { icon: Mail, label: "Bản tin", path: "/admin/newsletters" },
   { icon: Settings, label: "Cài đặt Website", path: "/admin/site-settings" },
+  { icon: FileText, label: "Trang Giới thiệu", path: "/admin/about-page" },
+  { icon: Wrench, label: "Quy trình tân trang", path: "/admin/refurbishment-process" },
 ];
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
