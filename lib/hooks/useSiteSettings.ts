@@ -18,7 +18,7 @@ const defaultSettings: SiteSettings = {
   siteDescription: 'Thiết bị tân trang chính hãng - Tiết kiệm thông minh, bảo hành 12 tháng',
   email: 'baohanh@refurbest.vn',
   phone: '0288 993 889',
-  address: '',
+  address: '146 Nguyễn Văn Trỗi, Phú Nhuận, Tòa nhà Kingston Residence',
 };
 
 export function useSiteSettings() {
@@ -40,7 +40,10 @@ export function useSiteSettings() {
             siteDescription: data.site_description || defaultSettings.siteDescription,
             email: data.email || defaultSettings.email,
             phone: data.phone || defaultSettings.phone,
-            address: data.address || defaultSettings.address,
+            
+            // ĐIỂM QUAN TRỌNG: Chỉ dùng địa chỉ tĩnh, KHÔNG dùng data.address từ database nữa
+            address: defaultSettings.address,
+            
             facebookUrl: data.facebook_url,
             instagramUrl: data.instagram_url,
             youtubeUrl: data.youtube_url,
