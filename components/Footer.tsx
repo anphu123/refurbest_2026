@@ -134,7 +134,7 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h3 className="font-bold text-white mb-6 text-lg">Liên hệ</h3>
-            <ul className="space-y-4 text-sm">
+            <ul className="space-y-4 text-sm mb-6">
               <li className="flex items-start gap-3 group">
                 <div className="w-10 h-10 bg-green-600/20 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-green-600/30 transition-colors">
                   <Phone className="w-5 h-5 text-green-300" />
@@ -164,6 +164,10 @@ export default function Footer() {
                 </div>
               </li>
             </ul>
+            <div className="text-center text-sm text-gray-300 mt-6 pt-6 border-t border-gray-700/50">
+              <p className="font-semibold text-white mb-1">CÔNG TY CỔ PHẦN CÔNG NGHỆ CELEBI VIỆT NAM</p>
+              <p>Mã số thuế: <span className="text-white">0109163757</span></p>
+            </div>
           </div>
         </div>
       </div>
